@@ -166,6 +166,9 @@ def hist1dplot_withratio(Hists,**kwargs):
     for h in Hists:
         if hasattr(h,"legend_entry"):
             labels2.append(h.legend_entry)
+        else:
+            print("Doing")
+            labels2.append(h.name)
 
     ax1.legend(handles, labels2,fontsize=20,frameon=False,loc="upper right")
 
