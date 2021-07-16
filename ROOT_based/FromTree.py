@@ -7,6 +7,11 @@ from PyHep_Hist import Histogram
 
 def MakePyHist(filename,treename,binning,branchname):
 
+	'''
+	Function extracts ROOT TTree from associated ROOT file
+	Could implement a sub-function here such that it can be used to loop over many files
+	'''
+
 	assert os.path.isfile(filename), "Cannot find this file: "+ filename
 	file = TFile(filename,"READ")
 	assert hasattr(file,treename), "In file "+filename+", TTree not found:" + treename
