@@ -17,11 +17,15 @@ class Hist_Object:
     def __init__(self,Histogram,errors,**kwargs):
 
         self.Histogram = Histogram 
-        self.errors_up = errors[0]
-        self.errors_down = errors[1]
+        self.errors_up = errors[1]
+        self.errors_down = errors[0]
+
+        self.Set_Features(**kwargs)
+
+    def Set_Features(self,**kwargs):
 
         self.colour = kwargs["colour"] if "colour" in kwargs else "black"
-        self.label  = kwargs["label"]  if "label"  in kwargs else "black"
+        self.label  = kwargs["label"]  if "label"  in kwargs else ""
 
 
 

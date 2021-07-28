@@ -15,10 +15,11 @@ def main():
     H_mu_pt = Histogram_Wrapper(tree1,"mu_pt",binning=binning,colour="red")#,normalise=False)#,AutoBin=True)
     H_mu_E  = Histogram_Wrapper(tree1,"mu_e" ,binning=binning,colour="blue")#,normalise=False)
 
+    # Initialise the plot
+    x = Ratio_Plot("plot1",list_of_histograms=[H_mu_pt,H_mu_E],divisor=H_mu_E,plot_normalised=False)
+    x.Initalise_Plot_Design("ATLASTex")
 
-
-    x = Ratio_Plot("plot1",list_of_histograms=[H_mu_pt,H_mu_E],divisor=H_mu_E)
-    x.Initalise_Plot_Design("ATLAS")
+    # Returns the plot for subsequent saving etc
     plt = x.Make_Plot()
 
     plt.show()

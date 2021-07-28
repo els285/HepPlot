@@ -28,11 +28,9 @@ class HEP_Plot:
             sns.set_style(kwargs["style"])
         else:
             sns.set_style("dark")
-        # return fig,ax,rax
 
     def Add_Histograms(self,histograms2add: list):
         self.list_of_histograms = self.list_of_histograms + histograms2add
-
 
 
     def Initalise_Plot_Design(self,design,**kwargs):
@@ -41,8 +39,6 @@ class HEP_Plot:
 
         allowed_experiment_styles = ["ATLAS","ALICE","LHCb2","CMS","ATLASTex"]
 
-        # if design=="ATLAS":
-        #     self.Initialise_ATLAS_Plot()
         if any([design == x for x in allowed_experiment_styles]):
             self.Initialise_LHC_Plot(design)
         elif design=="Seaborn":
@@ -53,11 +49,8 @@ class HEP_Plot:
     def Steps_Filled_Erros(ax,Hist_Ob):#Histogram,error_up,error_down): # Need to pass error up and error down
 
         """For making a histogram plot with steps, where the errors are filled lighter bars above and below the step """
-        # pass
-        # Unpack 
-        Histogram = Hist_Ob.Histogram 
-        # coloir = Hist_Ob.colour
 
+        Histogram = Hist_Ob.Histogram 
 
         hep.histplot(Histogram, ax=ax, stack=False, histtype='step',color=Hist_Ob.colour)
 
@@ -69,6 +62,8 @@ class HEP_Plot:
             values=Histogram.values() + Hist_Ob.errors_up,
             baseline=Histogram.values() - Hist_Ob.errors_down,
             edges=Histogram.axes[0].edges, label='Stat. unc.',fill=True,alpha=0.25,color=Hist_Ob.colour)
+
+
 
 
     def __init__(self,plot_title,**kwargs):
@@ -96,14 +91,17 @@ class Single_Plot(HEP_Plot):
 
 class Ratio_Plot(HEP_Plot):
 
+    '''
+    The Ratio_Plot inherits from the parent HEP_Plot class
+    The methods here are:
+        - the computation of ratio histograms
+        - the initialistion of the mpl object
+        - the filling of the plot
+    '''
+
     def __init__(self,plot_title,**kwargs):
         super().__init__(plot_title,**kwargs) 
         self.divisor = kwargs["divisor"] if "divisor" in kwargs else None
-
-    def Divide_Hists(self):
-
-        for hist in self.list_of_histograms:
-            hist.Generate_Ratio(self.divisor)
 
     @staticmethod
     def Compute_Ratio(hist1,hist2):
@@ -119,19 +117,24 @@ class Ratio_Plot(HEP_Plot):
         # Initialise the plot
         fig, (ax, rax) = plt.subplots(2, 1, figsize=(6,6), gridspec_kw=dict(height_ratios=[3, 1], hspace=0.1), sharex=True)
 
+
         # Select whether to do normalisation
 
         for H in self.list_of_histograms:
+
+            print(H.branch_name)
 
             if self.Normalised == False:
 
                 self.Steps_Filled_Erros(ax=ax,Hist_Ob=H.UnNorm_Hist)
                 ratio_obj = self.Compute_Ratio(H.UnNorm_Hist.Histogram,self.divisor.UnNorm_Hist.Histogram)
+                ratio_obj.Set_Features(colour=H.colour)
                 self.Steps_Filled_Erros(ax=rax,Hist_Ob=ratio_obj)
 
             elif self.Normalised == True:
                 self.Steps_Filled_Erros(ax=ax,Hist_Ob=H.Norm_Hist)
                 ratio_obj = self.Compute_Ratio(H.Norm_Hist.Histogram,self.divisor.Norm_Hist.Histogram)
+                ratio_obj.Set_Features(colour=H.colour)
                 self.Steps_Filled_Erros(ax=rax,Hist_Ob=ratio_obj)
 
         return plt
