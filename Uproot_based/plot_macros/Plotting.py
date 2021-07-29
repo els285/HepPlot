@@ -5,6 +5,8 @@ import numpy as np
 from hist.intervals import ratio_uncertainty
 import boost_histogram as bh
 import uproot
+from matplotlib.lines import Line2D
+
 
 from Hist_Wrapper import Histogram_Wrapper, Hist_Object
 
@@ -68,6 +70,10 @@ class HEP_Plot:
             self.Initialise_Seaborn_Plot(**kwargs)
 
 
+    def Customise_Legend(self):
+        pass
+
+
     @staticmethod
     def Steps_Filled_Erros(ax,Hist_Ob):#Histogram,error_up,error_down): # Need to pass error up and error down
 
@@ -75,16 +81,15 @@ class HEP_Plot:
 
         Histogram = Hist_Ob.Histogram 
 
-        hep.histplot(Histogram, ax=ax, stack=False, histtype='step',color=Hist_Ob.colour)
+        hep.histplot(Histogram, ax=ax, stack=False, histtype='step',color=Hist_Ob.colour,label=Hist_Ob.label,lw=1.0)
 
-
+        # Not used
         errps = {'hatch':'////', 'facecolor':'blue', 'lw': 0, 'alpha': 0.4}
-        # errps = {'alpha':0.4}
 
         ax.stairs(
             values=Histogram.values() + Hist_Ob.errors_up,
             baseline=Histogram.values() - Hist_Ob.errors_down,
-            edges=Histogram.axes[0].edges, label='Stat. unc.',fill=True,alpha=0.25,color=Hist_Ob.colour)
+            edges=Histogram.axes[0].edges, fill=True,alpha=0.25,color=Hist_Ob.colour)
 
 
 
@@ -130,11 +135,23 @@ class Ratio_Plot(HEP_Plot):
     @staticmethod
     def Compute_Ratio(hist1,hist2):
         ratio_hist = hist1/hist2
-        ratio_uncertainties = ratio_uncertainty(hist1,hist2,"poisson")
+        ratio_uncertainties = ratio_uncertainty(hist1.view(),hist2.view(),"poisson")
+        # print(ratio_uncertainties)
+        # input()
         return Hist_Object(ratio_hist,ratio_uncertainties)#[0],ratio_uncertainties[1])
+
+    def Axis_Labels(self,dic_of_labels):
+        self.axes[1].set_xlabel(dic_of_labels["x"])
+        self.axes[1].set_ylabel(dic_of_labels["y2"])
+        self.axes[0].set_ylabel(dic_of_labels["y1"])
+
+    def Axis_XTick_Labels(self,labels,**kwargs):
+        # print(self.axes[1].get_xticklabels)
+        # input()
+        self.axes[1].set_xticklabels(labels)
         
 
-    def Make_Plot(self):
+    def Make_Step_Fill_Plot(self):
 
         assert len(self.list_of_histograms) != 0, "No histograms passed to plot" 
 
@@ -144,13 +161,10 @@ class Ratio_Plot(HEP_Plot):
         self.fig = fig
         self.axes = (ax,rax)
 
-
-
         # Select whether to do normalisation
+        legend_elements = []
 
         for H in self.list_of_histograms:
-
-            print(H.branch_name)
 
             if self.Normalised == False:
 
@@ -165,7 +179,12 @@ class Ratio_Plot(HEP_Plot):
                 ratio_obj.Set_Features(colour=H.colour)
                 self.Steps_Filled_Erros(ax=rax,Hist_Ob=ratio_obj)
 
+            # Do the legend part here
+            legend_elements.append(Line2D([0],[0],color=H.colour,lw=2,label=H.label))
 
+        ax.legend(handles=legend_elements)#, loc='center')
+
+        # ax.legend()
         return plt
 
 

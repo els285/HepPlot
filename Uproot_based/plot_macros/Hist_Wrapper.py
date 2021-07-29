@@ -19,6 +19,8 @@ class Hist_Object:
         self.Histogram = Histogram 
         self.errors_up = errors[1]
         self.errors_down = errors[0]
+        # self.colour "black"
+        # self.label = ""
 
         self.Set_Features(**kwargs)
 
@@ -42,6 +44,11 @@ class Histogram_Wrapper:
         self.TTree = tree
         self.branch_name = branch_name
         self.number_of_bins = 26
+        self.normalise = kwargs["normalise"] if "normalise" in kwargs else True
+
+        # Plot features
+        self.colour = kwargs["colour"] if "colour" in kwargs else None
+        self.label  = kwargs["label"]  if "label"  in kwargs else None
 
         # Extract histogram for Uproot file TTree
         self.df = self.Branch2DF(self.TTree,self.branch_name)
@@ -50,15 +57,19 @@ class Histogram_Wrapper:
 
         # Generate boost_histogram, and wrap with errors
         boost_hist = self.Generate_Histogram(self.df,self.binning)
+
+        # print(type(boost_hist.view()))
+        # input()
+
         boost_hist_errors = self.errors(boost_hist)
-        self.UnNorm_Hist = Hist_Object(boost_hist,boost_hist_errors)
+        self.UnNorm_Hist = Hist_Object(boost_hist,boost_hist_errors,colour=self.colour,label=self.label)
        
        # Generate normalised histogram, and wrap with errors
-        self.Norm_Hist    = self.Do_Normalisation(boost_hist)
+        if self.normalise:
+            self.Norm_Hist    = self.Do_Normalisation(boost_hist)
+            self.Norm_Hist.Set_Features(colour=self.colour,label=self.label)
 
-        # Plot features
-        self.colour = kwargs["colour"] if "colour" in kwargs else None
-        self.UnNorm_Hist.colour,self.Norm_Hist.colour = self.colour,self.colour
+        # self.UnNorm_Hist.colour,self.Norm_Hist.colour = self.colour,self.colour
 
 
     def Generate_Binning(self,kwargs):
@@ -112,8 +123,8 @@ class Histogram_Wrapper:
 
         '''Performs normalisation of histogram '''
 
-        Normalised_Histogram     = boost_hist *(1/boost_hist.sum())
-        Normalised_Uncertainties = ratio_uncertainty(boost_hist , boost_hist.sum(),"poisson")
+        Normalised_Histogram     = boost_hist/boost_hist.sum()
+        Normalised_Uncertainties = ratio_uncertainty(boost_hist.view() , boost_hist.sum(),"poisson")
 
         return Hist_Object(Normalised_Histogram,Normalised_Uncertainties)
 
