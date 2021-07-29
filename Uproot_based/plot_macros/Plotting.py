@@ -12,11 +12,34 @@ from Hist_Wrapper import Histogram_Wrapper, Hist_Object
 
 class HEP_Plot:
 
+    allowed_experiment_styles = ["ATLAS","ALICE","LHCb2","CMS","ATLASTex"]
+
+    def Add_ATLAS_Label(self,label_text,**kwargs):
+
+        ax = self.axes[0]
+
+        if self.plot_design in ["ATLAS","ATLASTex"]:
+
+            loc = kwargs["loc"] if "loc" in kwargs else 1
+
+            if loc == 1:
+                yaxis_limits = ax.get_ylim()
+                ax.set_ylim(yaxis_limits[0],yaxis_limits[1]*1.2)
+            l1 = hep.atlas.text(label_text,ax=ax,loc=loc)
+
+            if "specific_location" in kwargs:
+                #Defined from first word
+                x_diff,y_diff = l1[1]._x - l1[0]._x , l1[1]._y - l1[0]._y
+
+                l1[0]._x = kwargs["specific_location"][0]
+                l1[0]._y = kwargs["specific_location"][1]
+                l1[1]._x = kwargs["specific_location"][0] + x_diff
+                l1[1]._y = kwargs["specific_location"][1] + y_diff
+
  
     def Initialise_LHC_Plot(self,experiment):
 
-        allowed_experiment_styles = ["ATLAS","ALICE","LHCb2","CMS","ATLASTex"]
-        assert any([experiment == x for x in allowed_experiment_styles]), "Experiment style not defined"
+        assert any([experiment == x for x in self.allowed_experiment_styles]), "Experiment style not defined"
 
         hep.style.use(experiment)#, {'xtick.direction': 'out'}])
 
@@ -65,11 +88,12 @@ class HEP_Plot:
 
 
 
-
     def __init__(self,plot_title,**kwargs):
         self.plot_title = plot_title
         self.list_of_histograms = []
         self.Normalised = True
+        self.fig  = None
+        self.axes = None
 
         if "plot_design" in kwargs:
             self.plot_design = kwargs["plot_design"]
@@ -117,6 +141,10 @@ class Ratio_Plot(HEP_Plot):
         # Initialise the plot
         fig, (ax, rax) = plt.subplots(2, 1, figsize=(6,6), gridspec_kw=dict(height_ratios=[3, 1], hspace=0.1), sharex=True)
 
+        self.fig = fig
+        self.axes = (ax,rax)
+
+
 
         # Select whether to do normalisation
 
@@ -137,7 +165,9 @@ class Ratio_Plot(HEP_Plot):
                 ratio_obj.Set_Features(colour=H.colour)
                 self.Steps_Filled_Erros(ax=rax,Hist_Ob=ratio_obj)
 
+
         return plt
+
 
 
 

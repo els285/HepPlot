@@ -88,8 +88,8 @@ class HEP_Plot:
         fig, ax, rax =  self.Initialise_LHC_Plot("ATLAS")
         l1 = hep.atlas.text("Internal",ax=ax,loc=0)
 
-        # [print((p._x,p._y)) for p in l1]
-        # input()
+        [print((p._x,p._y)) for p in l1]
+        input()
 
         return fig,ax,rax
 

@@ -112,7 +112,7 @@ class Histogram_Wrapper:
 
         '''Performs normalisation of histogram '''
 
-        Normalised_Histogram     = boost_hist / boost_hist.sum()
+        Normalised_Histogram     = boost_hist *(1/boost_hist.sum())
         Normalised_Uncertainties = ratio_uncertainty(boost_hist , boost_hist.sum(),"poisson")
 
         return Hist_Object(Normalised_Histogram,Normalised_Uncertainties)

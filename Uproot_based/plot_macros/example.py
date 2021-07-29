@@ -17,12 +17,13 @@ def main():
 
     # Initialise the plot
     x = Ratio_Plot("plot1",list_of_histograms=[H_mu_pt,H_mu_E],divisor=H_mu_E,plot_normalised=False)
-    x.Initalise_Plot_Design("ATLASTex")
+    x.Initalise_Plot_Design("Seaborn")
 
-    # Returns the plot for subsequent saving etc
+    # Returns the plt object so adjustments can be made here
     plt = x.Make_Plot()
+    x.Add_ATLAS_Label("Internal")
 
-    plt.show()
-    input()
+    plt.savefig("plot2_test.png",dpi=300)
+
 
 main()
