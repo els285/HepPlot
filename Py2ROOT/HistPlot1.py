@@ -173,14 +173,14 @@ def hist1dplot_withratio(Hists,**kwargs):
 
     ########################### Axis Labels ######################
 
-    if "axislabels" in kwargs:
-        labels=kwargs["axislabels"]
+    if "axis_labels" in kwargs:
+        labels=kwargs["axis_labels"]
         ax1.set_ylabel(labels["y_upper"]  ,fontsize=28)#,labelpad=24)
         ax2.set_xlabel(labels["x_label"]  ,fontsize=32)#,labelpad=10)
         ax2.set_ylabel(labels["y_lower"]  ,fontsize=20)#,labelpad=36)
 
 
-    ax1.yaxis.set_label_coords(-0.07,0.875)
+    ax1.yaxis.set_label_coords(-0.07,0.7)
     ax2.yaxis.set_label_coords(-0.07,0.5)
 
 

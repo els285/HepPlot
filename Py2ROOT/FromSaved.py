@@ -18,13 +18,15 @@ def PyHist_fromROOT(filename,histname):
 	# tree = file.Get(treename)
 
 	ROOT_hist = file.Get(histname)
+	# ROOT_hist.Draw()
+	# raw_input()
 
 
 
 	ROOT_hist.Scale(1/ROOT_hist.Integral())
 	ROOT_hist.SetDirectory(0)
 
-	py_hist = Histogram(ROOT_hist,filename+"_"+treename+"_"+branchname)
+	py_hist = Histogram(ROOT_hist,filename+histname)
 
 
 
