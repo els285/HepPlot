@@ -1,5 +1,5 @@
 from ROOT import TH1D,TH1
-
+# import matplotlib.pyplot as plt
 import numpy as np
 
 TH1.SetDefaultSumw2()
@@ -22,25 +22,17 @@ x1 = Histogram(hist1,"hist1",colour="blue"  ,legend_entry="tennis")
 x2 = Histogram(hist2,"hist2",colour="red",legend_entry="tennis")
 
 
-# print(x2.__dict__)
-# exit()
-
-# d_hist = x1.Norm_hist.Clone()
-
-# print(x2.Norm_hist)
-# input()
-
-# d_hist.Divide(x1.Norm_hist)
-# d_hist.Draw()
-# input()
 
 from Plotting import Ratio_Plot_ROOT
 
 p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1)
 p.Initalise_Plot_Design("ATLAS")
 
-# print(p.__dict__)
-# input()
+plt = p.Make_Plot()
+
+plt.show()
+
+input()
 
 
 import mplhep as hep 

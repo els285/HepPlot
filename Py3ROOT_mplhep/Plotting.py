@@ -80,21 +80,29 @@ class HEP_Plot:
         pass
 
     @staticmethod
-    def Steps_Filled_Erros(ax,Hist_Ob):#Histogram,error_up,error_down): # Need to pass error up and error down
+    def Steps_Filled_Erros(ax,Hist_Wrapper,Normalised):#Histogram,error_up,error_down): # Need to pass error up and error down
 
         """For making a histogram plot with steps, where the errors are filled lighter bars above and below the step """
 
-        Histogram = Hist_Ob.Histogram 
+        # Histogram = Hist_Ob.Histogram
+        # print(Hist_Wrapper.__dict__)
+        # input()
+        Hist = Hist_Wrapper.Norm_hist if Normalised else Hist_Wrapper.ROOT_hist
 
-        hep.histplot(Histogram, ax=ax, stack=False, histtype='step',color=Hist_Ob.colour,label=Hist_Ob.label,lw=1.0)
+        hep.histplot(Hist, ax=ax, stack=False, histtype='step',color=Hist_Wrapper.colour,label=Hist_Wrapper.legend_entry,lw=1.0)
 
         # Not used
         errps = {'hatch':'////', 'facecolor':'blue', 'lw': 0, 'alpha': 0.4}
 
+
+        # bin_edges = [xx_axis.GetBinUpEdge(binn) for x in ]
+        x_binning = Hist_Wrapper.Bin_Edges(Hist)
+        values    = Hist_Wrapper.Bin_Values(Hist)
+        errors    = Hist_Wrapper.Bin_Errors(Hist)
         ax.stairs(
-            values=Histogram.values() + Hist_Ob.errors_up,
-            baseline=Histogram.values() - Hist_Ob.errors_down,
-            edges=Histogram.axes[0].edges, fill=True,alpha=0.25,color=Hist_Ob.colour)
+            values=values + errors,
+            baseline=values - errors,
+            edges=x_binning, fill=True,alpha=0.25,color=Hist_Wrapper.colour)
 
 
 
@@ -146,9 +154,6 @@ class Ratio_Plot_ROOT(HEP_Plot):
             hist = self.Compute_Ratio(HW.ROOT_hist,self.divisor.ROOT_hist)
             self.ratios2plot.append(Ratio_Object(hist,HW.colour))
 
-        print(self.ratios2plot)
-        input()
-
 
     def Do_Ratio(self):
 
@@ -159,7 +164,24 @@ class Ratio_Plot_ROOT(HEP_Plot):
         else:
             self.Construct_Ratio_Histograms("ROOT_hist")
 
-    def Make_Plot()
+    def Make_Plot(self):
+
+        fig, (ax, rax) = plt.subplots(2, 1, figsize=(6,6), gridspec_kw=dict(height_ratios=[3, 1], hspace=0.1), sharex=True)
+        self.fig = fig
+        self.axes = (ax,rax)
+
+        for HW in self.list_of_histograms:
+            self.Steps_Filled_Erros(ax,HW,self.Normalised)
+
+        return plt
+
+        # if self.Normalised:
+        #     Steps_Filled_Erros(ax,Hist_Ob)
+        # else:
+        #     Steps_Filled_Erros(ax,Hist_Ob)
+
+
+        # pass
 
        
 

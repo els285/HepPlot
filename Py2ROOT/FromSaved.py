@@ -1,7 +1,7 @@
 
 import os
 from ROOT import TFile,TH1D
-from PyHep_Hist import Histogram
+from PyHep_Hist_no_rootnumpy import Histogram
 
 
 
