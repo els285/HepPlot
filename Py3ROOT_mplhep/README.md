@@ -11,3 +11,5 @@ Therefore current options are:
 * Design a plotting macro in Python3.6 which relies only minimally on mplhep. ROOT usage also in Python3.6
 * Design a plotting macro in Python3.7, having converted ROOT histograms into pythonic objects beforehand. This can probably accomplishped by some PyHEP means but likely only in Python3.7
 * Built ROOT for Python3.7. Fundamentally the only thing gained is the hep.histplot command 
+
+Uproot version continues unrelated.

@@ -34,10 +34,6 @@ class Histogram:
 
     def __init__(self,hist,name,**kwargs):
 
-        '''
-        Histogram class has evolved to contain more and more parameters.
-        Histogram3.ROOT_hist has proven to be problematic
-        '''
 
         self.name               = name
         self.ROOT_hist          = hist
@@ -46,5 +42,5 @@ class Histogram:
         self.branch_name        = kwargs["branchname"]       if "branchname"        in kwargs else None
         self.legend_entry       = kwargs["legend_entry"]     if "legend_entry"      in kwargs else ""
         self.colour             = kwargs["colour"]           if "colour"            in kwargs else "black"
-        self.Norm_hist = self.Compute_Normalised()
+        self.Norm_hist          = self.Compute_Normalised()
 
