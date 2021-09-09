@@ -43,19 +43,19 @@ import mplhep as hep
 
 # plt.style.use(hep.style.ATLAS) # This is the correct syntax for Pytohn3.6.9 version (mplhep 0.2.8)
 
-fig, ax = plt.subplots()
+# fig, ax = plt.subplots()
 
 # fig,ax =
 # Ratio plot
-# fig, (ax, rax) = plt.subplots(2, 1, figsize=(6,6), gridspec_kw=dict(height_ratios=[3, 1], hspace=0.1), sharex=True)
+fig, (ax, rax) = plt.subplots(2, 1, figsize=(6,6), gridspec_kw=dict(height_ratios=[3, 1], hspace=0.1), sharex=True)
 
 
 
-# hep.atlas.text("Internal",loc=1)#,ax=ax,loc=0)
+hep.atlas.text("Internal",loc=1)#,ax=ax,loc=0)
 
 
-# hep.histplot(x1.ROOT_hist,ax=ax)
-# ax.errorbar(0, 10000, yerr=100000)
+hep.histplot(x1.ROOT_hist,ax=ax)
+ax.errorbar(0, 10000, yerr=100000)
 plt.axvline(0,-10000,10000)
 
 

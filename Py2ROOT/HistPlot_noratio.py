@@ -176,8 +176,8 @@ def hist1dplot_NOratio(Hists,**kwargs):
 
     if "axis_labels" in kwargs:
         labels=kwargs["axis_labels"]
-        ax1.set_ylabel(labels["y_upper"]  ,fontsize=28)#,labelpad=24)
-        # ax2.set_xlabel(labels["x_label"]  ,fontsize=32)#,labelpad=10)
+        ax1.set_xlabel(labels["x_label"]  ,fontsize=32)#,labelpad=10)
+        ax1.set_ylabel(labels["y_label"]  ,fontsize=28)#,labelpad=24)
         # ax2.set_ylabel(labels["y_lower"]  ,fontsize=20)#,labelpad=36)
 
 
@@ -204,8 +204,6 @@ def hist1dplot_NOratio(Hists,**kwargs):
     elif "title" in kwargs:
         plt.savefig("./" + kwargs["title"]+".png",dpi=300)
 
-    plt.show()
-    raw_input()
-    plt.close()
+    return plt
 
 

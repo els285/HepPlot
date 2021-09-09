@@ -79,6 +79,34 @@ class HEP_Plot:
     def Steps_Filled_Errors_Root(ax,ROOT_hist):
         pass
 
+
+    @staticmethod
+    def Step_Errorbar_Line(ax,Hist_Wrapper,Normalised):
+
+        Hist = Hist_Wrapper.Norm_hist if Normalised else Hist_Wrapper.ROOT_hist
+
+
+        # Hist.Draw()
+        # input()
+
+        # hep.histplot seems to incorrectly draw the ROOT histogram?
+
+        hep.histplot(Hist, ax=ax, stack=False, histtype='step',color=Hist_Wrapper.colour,label=Hist_Wrapper.legend_entry,lw=1.0)
+
+        x_binning = Hist_Wrapper.Bin_Centres(Hist)
+        values    = Hist_Wrapper.Bin_Values(Hist)
+        errors    = Hist_Wrapper.Bin_Errors(Hist)
+
+        # print(x_binning)
+        # print(values)
+        # print(errors)
+        # input()
+        # ax.errorbar(x_binning,values,errors)
+        plt.show()
+        input()
+
+
+
     @staticmethod
     def Steps_Filled_Erros(ax,Hist_Wrapper,Normalised):#Histogram,error_up,error_down): # Need to pass error up and error down
 
@@ -171,7 +199,8 @@ class Ratio_Plot_ROOT(HEP_Plot):
         self.axes = (ax,rax)
 
         for HW in self.list_of_histograms:
-            self.Steps_Filled_Erros(ax,HW,self.Normalised)
+            # self.Steps_Filled_Erros(ax,HW,self.Normalised)
+            self.Step_Errorbar_Line(ax,HW,self.Normalised)
 
         return plt
 

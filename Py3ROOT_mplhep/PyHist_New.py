@@ -10,7 +10,6 @@ class Histogram:
     def Bin_Edges(hist):
         return np.asarray([hist.GetXaxis().GetBinUpEdge(binn) for binn in range(0,hist.GetXaxis().GetNbins()+1)])
 
-
     @staticmethod
     def Bin_Centres(hist):
         return np.asarray([hist.GetXaxis().GetBinCenter(binn+1) for binn in range(0,hist.GetNbinsX())])
