@@ -16,7 +16,7 @@ hist3 = hist1.Clone()
 hist3.Divide(hist2)
 
 
-from PyHist_NoROOT import PyHist as Histogram
+from PyHist_Class import PyHist as Histogram
 
 x1 = Histogram(hist1,"hist1",colour="blue"  ,legend_entry="tennis")
 x2 = Histogram(hist2,"hist2",colour="red",legend_entry="tennis")
