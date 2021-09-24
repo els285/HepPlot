@@ -9,21 +9,30 @@ import pickle
 # from dataclasses import dataclass
 # @dataclass
 
-class Hist_Wrap:
-    """ Basic wrapper for ROOT histogram """
+class PyHist:
+    """ Basic wrapper for ROOT histogram 
+    Should contain no ROOT functionality, just a container for the information
+    """
 
-    def __init__(self,Name,Bin_Values,Bin_Errors,Bin_Centres,Bin_Edges):
+    def __init__(self,Name,Bin_Values,Bin_Errors,Bin_Centres,Bin_Edges,**kwargs):
+
+        # Data
         self.Name        = Name
         self.Bin_Values  = Bin_Values  
         self.Bin_Errors  = Bin_Errors  
         self.Bin_Centres = Bin_Centres 
         self.Bin_Edges   = Bin_Edges   
 
+        # Plot meta-data
+        self.colour       = kwargs["colour"]       if "colour"       in kwargs else "blue"
+        self.linewidth    = kwargs["linewdith"]    if "linewdith"    in kwargs else 2
+        self.legend_entry = kwargs["legend_entry"] if "legend_entry" in kwargs else ""
 
 
-class PyHist:
+
+class Histogram_Wrapper:
     """
-    Larger wrapper which contains Hist_Wraps, including methods for ROOT->numpy conversion
+    Larger wrapper which contains PyHists, including methods for ROOT->numpy conversion
     """
 
     @staticmethod
@@ -48,23 +57,26 @@ class PyHist:
         """ Takes a ROOT histogram and normalised it"""
 
         h1dN = ROOT_hist.Clone(ROOT_hist.GetName()+"_norm")
-        return h1dN.Scale(1/ROOT_hist.Integral())
+        h1dN.Scale(1/ROOT_hist.Integral())
 
-    def Create_Wrapper(self,hist,name):
+        return h1dN
+
+    @classmethod
+    def Create_Wrapper(self,hist,name,**kwargs):
+
 
         Bin_Values  = self.get_bin_values(hist)
         Bin_Errors  = self.get_bin_errors(hist)
         Bin_Centres = self.get_bin_centres(hist)
         Bin_Edges   = self.get_bin_edges(hist)
-        return Hist_Wrap(name,Bin_Values,Bin_Errors,Bin_Centres,Bin_Edges)
+        return PyHist(name,Bin_Values,Bin_Errors,Bin_Centres,Bin_Edges,**kwargs)
 
-    def __init__(self,hist,name,**kwargs):
+    def __init__(self,ROOT_hist,name,**kwargs):
 
         '''
-        The PyHist_NoROOT object is for converting ROOT histograms into numpy objects,
+        The Histogram_Wrapper object is for converting ROOT histograms into numpy objects,
             but the data members of the class should contain no ROOT objects.
         '''
-
         # Meta-data
         self.name               = name
         self.observable_type    = kwargs["obs"]              if "obs"               in kwargs else None
@@ -73,13 +85,21 @@ class PyHist:
         # Plotting information
         self.legend_entry       = kwargs["legend_entry"]     if "legend_entry"      in kwargs else ""
         self.colour             = kwargs["colour"]           if "colour"            in kwargs else "black"
+        self.linewidth          = kwargs["linewidth"]        if "linewidth"         in kwargs else 2
+
+        # ROOT histograms
+        norm_hist = self.Compute_Normalised(ROOT_hist)
+        self.UnNorm_ROOT_hist = ROOT_hist
+        self.Norm_ROOT_hist   = norm_hist 
 
         # Unnormalised Hist wrapper
-        self.UnNorm_Hist = self.Create_Wrapper(hist,self.name+"_Unnormalised")
+        self.UnNorm_PyWrap_Hist = self.Create_Wrapper(ROOT_hist,self.name+"_Unnormalised",
+            colour=self.colour,legend_entry=self.legend_entry,linewidth=self.linewidth)
 
         # Normalised Hist wrapper
-        norm_hist = self.Compute_Normalised(hist)
-        self.Norm_Hist   = self.Create_Wrapper(norm_hist,self.name+"_Normalised")
+        self.Norm_PyWrap_Hist   = self.Create_Wrapper(norm_hist,self.name+"_Normalised",
+            colour=self.colour,legend_entry=self.legend_entry,linewidth=self.linewidth)
+
 
 
 

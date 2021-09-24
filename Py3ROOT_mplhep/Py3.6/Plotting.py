@@ -8,7 +8,7 @@ import uproot
 from matplotlib.lines import Line2D
 
 
-# from Hist_Wrapper import Histogram_Wrapper, Hist_Object
+from PyHist_Class import PyHist,Histogram_Wrapper
 
 
 
@@ -18,6 +18,7 @@ class HEP_Plot:
 
     def Add_ATLAS_Label(self,label_text,**kwargs):
 
+        assert self.axes,"Axes not defined yet. Add label after plot is made"
         ax = self.axes[0]
 
         if self.plot_design in ["ATLAS","ATLASTex"]:
@@ -44,7 +45,10 @@ class HEP_Plot:
         assert any([experiment == x for x in self.allowed_experiment_styles]), "Experiment style not defined"
 
         # hep.style.use(experiment)#, {'xtick.direction': 'out'}])
-        plt.style.use(hep.style.ATLAS) # This is the correct syntax for Pytohn3.6.9 version (mplhep 0.2.8)
+        if   experiment=="ATLAS": plt.style.use(hep.style.ATLAS) # This is the correct syntax for Pytohn3.6.9 version (mplhep 0.2.8)
+        elif experiment=="CMS"  : plt.style.use(hep.style.CMS)
+        elif experiment=="ALICE": plt.style.use(hep.style.ALICE)
+        elif experiment=="LHCb2": plt.style.use(hep.setyle.LHCb2)
 
 
     def Initialise_Seaborn_Plot(self,**kwargs):
@@ -59,7 +63,7 @@ class HEP_Plot:
         self.list_of_histograms = self.list_of_histograms + histograms2add
 
 
-    def Initalise_Plot_Design(self,design,**kwargs):
+    def Initialise_Plot_Design(self,design,**kwargs):
 
         self.plot_design = design
 
@@ -79,32 +83,32 @@ class HEP_Plot:
     def Steps_Filled_Errors_Root(ax,ROOT_hist):
         pass
 
-
     @staticmethod
-    def Step_Errorbar_Line(ax,Hist_Wrapper,Normalised):
+    def Step_Errorbar_Line(ax,PH):
 
-        Hist = Hist_Wrapper.Norm_hist if Normalised else Hist_Wrapper.ROOT_hist
+        x_binning = PH.Bin_Edges
+        values    = np.concatenate((PH.Bin_Values,np.asarray([0])), axis=0)
+        errors    = PH.Bin_Errors
+
+        ax.plot(x_binning, values,drawstyle="steps-post",color=PH.colour,label=PH.Name,linewidth=PH.linewidth)#Hist_Wrapper.linewidth)
+        ax.vlines(x_binning[0],0,values[0],color=PH.colour,linewidth=PH.linewidth)#Hist_Wrapper.linewidth)
 
 
-        # Hist.Draw()
-        # input()
 
-        # hep.histplot seems to incorrectly draw the ROOT histogram?
+    # @staticmethod
+    # def Step_Errorbar_Line2(ax,Hist_Wrapper,Normalised):
 
-        hep.histplot(Hist, ax=ax, stack=False, histtype='step',color=Hist_Wrapper.colour,label=Hist_Wrapper.legend_entry,lw=1.0)
+    #     if Normalised:
+    #         PyHist = Hist_Wrapper.Norm_PyWrap_Hist
+    #     else:
+    #         PyHist = Hist_Wrapper.UnNorm_PyWrap_Hist
 
-        x_binning = Hist_Wrapper.Bin_Centres(Hist)
-        values    = Hist_Wrapper.Bin_Values(Hist)
-        errors    = Hist_Wrapper.Bin_Errors(Hist)
+    #     x_binning = PyHist.Bin_Edges
+    #     values    = np.concatenate((PyHist.Bin_Values,np.asarray([0])), axis=0)
+    #     errors    = PyHist.Bin_Errors
 
-        # print(x_binning)
-        # print(values)
-        # print(errors)
-        # input()
-        # ax.errorbar(x_binning,values,errors)
-        plt.show()
-        input()
-
+    #     ax.plot(x_binning, values,drawstyle="steps-post",color=Hist_Wrapper.colour,label=PyHist.Name,linewidth=2)#Hist_Wrapper.linewidth)
+    #     ax.vlines(x_binning[0],0,values[0],color=Hist_Wrapper.colour,linewidth=2)#Hist_Wrapper.linewidth)
 
 
     @staticmethod
@@ -137,7 +141,13 @@ class HEP_Plot:
     def __init__(self,plot_title,**kwargs):
         self.plot_title = plot_title
         self.list_of_histograms = []
-        self.Normalised = True
+
+        norms = ["Normalised","normalised","Normalise","normalise"]
+        self.Normalised = False
+        for x in norms:
+            if x in kwargs:
+                self.Normalised = kwargs[x]
+
         self.fig  = None
         self.axes = None
 
@@ -171,36 +181,44 @@ class Ratio_Plot_ROOT(HEP_Plot):
         d_hist.Divide(ROOT_hist_numer,ROOT_hist_denom)
         return d_hist
 
-    def Construct_Ratio_Histograms(self,hist_type):
+    ###### Constructing list of ratio histograms
 
-        self.ratios2plot = []
+    def Construct_Ratio_Histograms(self,hist_type):   
 
-        from collections import namedtuple
-        Ratio_Object = namedtuple("Ratio_Object",("Histogram","colour"))
+        self.list_of_ratio_histograms = []
 
         for HW in self.list_of_histograms:
-            hist = self.Compute_Ratio(HW.ROOT_hist,self.divisor.ROOT_hist)
-            self.ratios2plot.append(Ratio_Object(hist,HW.colour))
-
+            hist = self.Compute_Ratio(getattr(HW,hist_type),getattr(self.divisor,hist_type))
+            wrapped=Histogram_Wrapper.Create_Wrapper(hist,"name",colour=HW.colour,linewidth=HW.linewidth)
+            self.list_of_ratio_histograms.append(wrapped)
 
     def Do_Ratio(self):
 
-        assert self.divisor,"Divisor histogram not set"
+        assert self.divisor,"Divisor histogram not set"   
 
         if self.Normalised:
-            self.Construct_Ratio_Histograms("Norm_hist")
+            self.Construct_Ratio_Histograms("Norm_ROOT_hist")
         else:
-            self.Construct_Ratio_Histograms("ROOT_hist")
+            self.Construct_Ratio_Histograms("UnNorm_ROOT_hist")
 
-    def Make_Plot(self):
+    ###########################################################
+
+
+    def Make_Errorbar_Line_Plot(self):
 
         fig, (ax, rax) = plt.subplots(2, 1, figsize=(6,6), gridspec_kw=dict(height_ratios=[3, 1], hspace=0.1), sharex=True)
         self.fig = fig
         self.axes = (ax,rax)
 
-        for HW in self.list_of_histograms:
-            # self.Steps_Filled_Erros(ax,HW,self.Normalised)
-            self.Step_Errorbar_Line(ax,HW,self.Normalised)
+        # Top plot
+        for PH in self.list_of_histograms:
+            HW = PH.Norm_PyWrap_Hist if self.Normalised else PH.UnNorm_PyWrap_Hist
+            self.Step_Errorbar_Line(ax,HW)
+
+        for HW in self.list_of_ratio_histograms:
+            self.Step_Errorbar_Line(rax,HW)
+
+        # Ratio
 
         return plt
 

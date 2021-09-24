@@ -4,42 +4,37 @@ import numpy as np
 
 TH1.SetDefaultSumw2()
 
+# Make ROOT histograms
 
 
-hist1 = TH1D("hist1","",5,-3,3)
+hist1 = TH1D("hist1","",10,-1,1)
 hist1.FillRandom("gaus",1000)
 
-hist2 = TH1D("hist2","",5,-3,3)
+hist2 = TH1D("hist2","",10,-1,1)
 hist2.FillRandom("gaus",1000)
 
 hist3 = hist1.Clone()
 hist3.Divide(hist2)
 
+# Convert to Python Wrappers
 
-from PyHist_Class import PyHist as Histogram
+
+from PyHist_Class import Histogram_Wrapper as Histogram
 
 x1 = Histogram(hist1,"hist1",colour="blue"  ,legend_entry="tennis")
-x2 = Histogram(hist2,"hist2",colour="red",legend_entry="tennis")
+x2 = Histogram(hist2,"hist2",colour="red"  ,legend_entry="tennis" )
 
 
-
-# import pickle
-# filehandler = open("test_pickle.obj", 'wb') 
-# pickle.dump(x1, filehandler)
-# exit()
-
-
-# print(x2.Norm_Hist.__dict__)
-
-
-# exit()
+# Initialise the plot
 from Plotting import Ratio_Plot_ROOT
 
-p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1)
-p.Initalise_Plot_Design("ATLAS")
+p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1,normalise=True)
+p.Initialise_Plot_Design("ATLAS")
 
-plt = p.Make_Plot()
 
+plt = p.Make_Errorbar_Line_Plot()
+
+p.Add_ATLAS_Label("shskjghkhk")
 plt.show()
 
 input()
