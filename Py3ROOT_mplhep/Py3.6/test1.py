@@ -31,31 +31,10 @@ from Plotting import Ratio_Plot_ROOT
 p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1,normalise=True)
 p.Initialise_Plot_Design("ATLAS")
 
+plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
 
-plt = p.Make_Errorbar_Line_Plot()
-
-p.Add_ATLAS_Label("shskjghkhk")
-plt.show()
-
-input()
-
-
-import mplhep as hep 
-
-import matplotlib.pyplot as plt
-
-plt.style.use(hep.style.ATLAS)
-
-fig, (ax, rax) = plt.subplots(2, 1, figsize=(6,6), gridspec_kw=dict(height_ratios=[3, 1], hspace=0.1), sharex=True)
-
-hep.atlas.text("jsghshgjk",ax=ax,loc=1)
+p.Add_ATLAS_Label("Internal")
 
 
 
-for hist in [x1,x2]:
-	hep.histplot(hist.ROOT_hist, ax=ax, stack=False, histtype='step',color=hist.colour,label=hist.legend_entry,lw=1.0)
-
-
-# hep.histplot([hist1,hist2])
-
-plt.savefig("plot3_test.png",dpi=300)
+plt.savefig("save1.png",dpi=300)
