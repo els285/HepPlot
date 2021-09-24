@@ -3,7 +3,8 @@
 This is the current nominal method for plotting histograms in my local ROOT and python set up
 
 ## Requirements:
-Use `python3.6` to run
+Use `python3.6` to run.
+
 Uses ROOT 24.06 
 
 ## Running
