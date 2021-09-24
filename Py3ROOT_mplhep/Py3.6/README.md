@@ -15,7 +15,7 @@ To construct a ratio plot for example, one initialises the `Ratio_Plot_ROOT` obj
 p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1,normalise=True)
 ```
 
-The `Make_Ratio_Plot` method generates the plot based on the data and meta-data of the pythonic-histogram wrappers. The outputs can then be manipulated as one sees fit
+The `Make_Ratio_Plot` method generates the plot based on the data and meta-data of the pythonic-histogram wrappers. The plot style can be selected as an input. The outputs can then be manipulated as one sees fit.
 ```python3
 plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
 
