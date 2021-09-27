@@ -47,7 +47,8 @@ class HEP_Plot:
         if   experiment=="ATLAS": plt.style.use(hep.style.ATLAS) # This is the correct syntax for Pytohn3.6.9 version (mplhep 0.2.8)
         elif experiment=="CMS"  : plt.style.use(hep.style.CMS)
         elif experiment=="ALICE": plt.style.use(hep.style.ALICE)
-        elif experiment=="LHCb2": plt.style.use(hep.setyle.LHCb2)
+        elif experiment=="LHCb2": plt.style.use(hep.style.LHCb2)
+        elif experiment=="ATLASTex": plt.style.use(hep.style.ATLASTe)
 
 
     def Initialise_Seaborn_Plot(self,**kwargs):
@@ -191,6 +192,21 @@ class Ratio_Plot_ROOT(HEP_Plot):
         d_hist.Divide(ROOT_hist_numer,ROOT_hist_denom)
         return d_hist
 
+
+    def add_axis_labels(self,**kwargs):
+
+        if "x_upper" in kwargs:
+            self.axes[0].set_xlabel(kwargs["x_upper"])
+
+        if "x_lower" in kwargs:
+            self.axes[1].set_xlabel(kwargs["x_lower"])
+
+        if "y_upper" in kwargs:
+            self.axes[0].set_ylabel(kwargs["y_upper"])
+
+        if "y_lower" in kwargs:
+            self.axes[1].set_ylabel(kwargs["y_lower"])
+
     ###### Constructing list of ratio histograms
 
     def Construct_Ratio_Histograms(self,hist_type):   
@@ -239,6 +255,12 @@ class Ratio_Plot_ROOT(HEP_Plot):
 
         for HW in self.list_of_ratio_histograms:
             plotting_function(rax,HW)
+
+
+        # Do the legend here
+        handles, labels = ax.get_legend_handles_labels()
+        labels = [HW.legend_entry for HW in self.list_of_histograms]
+        ax.legend(handles, labels)
 
         return plt,ax,rax
 

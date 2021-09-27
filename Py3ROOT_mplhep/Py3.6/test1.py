@@ -17,12 +17,11 @@ hist3 = hist1.Clone()
 hist3.Divide(hist2)
 
 # Convert to Python Wrappers
-
-
 from PyHist_Class import Histogram_Wrapper as Histogram
 
 x1 = Histogram(hist1,"hist1",colour="blue"  ,legend_entry="tennis")
 x2 = Histogram(hist2,"hist2",colour="red"  ,legend_entry="tennis" )
+
 
 
 # Initialise the plot
@@ -32,9 +31,18 @@ p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1,normalise=Tru
 p.Initialise_Plot_Design("ATLAS")
 
 plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
-
+import matplotlib
 p.Add_ATLAS_Label("Internal")
 
+p.add_axis_labels(x_lower=r"$\Sigma$",y_upper=r"$\eta$",y_lower="y2")
 
+
+# Additional design paramters
+
+# ax.yaxis.labelpad = -5
+rax.yaxis.labelpad = 40
+
+fig = plt.gcf()
+fig.set_size_inches(8, 8)
 
 plt.savefig("save1.png",dpi=300)
