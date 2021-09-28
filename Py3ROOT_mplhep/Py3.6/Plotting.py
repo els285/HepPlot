@@ -110,7 +110,7 @@ class HEP_Plot:
 
         ax = HEP_Plot.Step_Line(ax,PH)
 
-        ax.errorbar(PH.Bin_Centres,PH.Bin_Values,PH.Bin_Errors,elinewidth=20,ecolor=PH.colour,fmt='',xerr=None,linestyle='')
+        ax.errorbar(PH.Bin_Centres,PH.Bin_Values,PH.Bin_Errors,elinewidth=PH.linewidth,ecolor=PH.colour,fmt='',xerr=None,linestyle='')
 
 
 
