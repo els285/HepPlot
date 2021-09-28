@@ -5,7 +5,7 @@ import numpy as np
 from hist.intervals import ratio_uncertainty
 import boost_histogram as bh
 import uproot
-from matplotlib.lines import Line2D
+# from matplotlib.lines import Line2D
 
 
 from PyHist_Class import PyHist,Histogram_Wrapper
@@ -163,6 +163,11 @@ class HEP_Plot:
                     "line-filled-error" : self.Line_Filled_Errors}
 
         return plot_dic[plot_type]
+
+
+
+
+
 
 
 
