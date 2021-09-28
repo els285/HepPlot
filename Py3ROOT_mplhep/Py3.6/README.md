@@ -22,6 +22,7 @@ plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
 
 ```
 
-![Alt text](save1.png)
 
-<img src="save1.png" alt="drawing" width="200"/>
+<img src="Example_Plots/plt_linefillederror.png" alt="drawing" width="200"/>
+
+
