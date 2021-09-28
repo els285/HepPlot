@@ -7,20 +7,25 @@ TH1.SetDefaultSumw2()
 # Make ROOT histograms
 
 
-hist1 = TH1D("hist1","",50,-1,1)
-hist1.FillRandom("gaus",1000)
+from FromTree import project_hist_unNormalised as proj 
 
-hist2 = TH1D("hist2","",50,-1,1)
-hist2.FillRandom("gaus",1000)
+ROOThist1 = proj(filename="/home/ethan/Documents/Qualification_Task/TTbar_Samples/ttbar_dec15_reco_odd.root",
+				treename="reco_odd",
+				binning=np.linspace(0,300e3,51),
+				branchname="el_pt")
 
-hist3 = hist1.Clone()
-hist3.Divide(hist2)
+ROOThist2 = proj(filename="/home/ethan/Documents/Qualification_Task/TTbar_Samples/ttbar_dec15_reco_odd.root",
+				treename="reco_odd",
+				binning=np.linspace(0,300e3,51),
+				branchname="mu_pt",)
+
+
 
 # Convert to Python Wrappers
 from PyHist_Class import Histogram_Wrapper as Histogram
 
-x1 = Histogram(hist1,"hist1",colour="pink"  ,legend_entry="tennis")
-x2 = Histogram(hist2,"hist2",colour="green"  ,legend_entry="tennis" )
+x1 = Histogram(ROOThist1,"hist1",colour="blue"  ,legend_entry="tennis")
+x2 = Histogram(ROOThist2,"hist2",colour="red"  ,legend_entry="tennis" )
 
 
 # Initialise the plot
@@ -29,12 +34,14 @@ from Plotting import Ratio_Plot_ROOT
 p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1,normalise=True)
 p.Initialise_Plot_Design("ATLAS")
 
-plt,ax,rax = p.Make_Ratio_Plot("line-filled-error")
+plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
 import matplotlib
 p.Add_ATLAS_Label("Internal")
 
 p.add_axis_labels(x_lower=r"$\Sigma$",y_upper=r"$\eta$",y_lower="y2")
 
+
+ax.legend(prop={'size': 60})
 
 # Additional design paramters
 
@@ -43,6 +50,8 @@ rax.yaxis.labelpad = 40
 
 fig = plt.gcf()
 fig.set_size_inches(8, 8)
+
+
 
 
 plt.show()

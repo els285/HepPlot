@@ -48,7 +48,9 @@ class HEP_Plot:
         elif experiment=="CMS"  : plt.style.use(hep.style.CMS)
         elif experiment=="ALICE": plt.style.use(hep.style.ALICE)
         elif experiment=="LHCb2": plt.style.use(hep.style.LHCb2)
-        elif experiment=="ATLASTex": plt.style.use(hep.style.ATLASTe)
+        elif experiment=="ATLASTex": 
+            print("This is not supported because do not have a working TexLive distribution")
+            # plt.style.use(hep.style.ATLASTex) # T
 
 
     def Initialise_Seaborn_Plot(self,**kwargs):
@@ -59,8 +61,7 @@ class HEP_Plot:
         else:
             sns.set_style("dark")
 
-    def Add_Histograms(self,histograms2add: list):
-        self.list_of_histograms = self.list_of_histograms + histograms2add
+
 
 
     def Initialise_Plot_Design(self,design,**kwargs):
@@ -75,16 +76,21 @@ class HEP_Plot:
             self.Initialise_Seaborn_Plot(**kwargs)
 
 
+
+    def Add_Histograms(self,histograms2add: list):
+        self.list_of_histograms = self.list_of_histograms + histograms2add
+
+
     def Customise_Legend(self):
         pass
 
 
     @staticmethod
-    def Steps_Filled_Errors_Root(ax,ROOT_hist):
-        pass
-
-    @staticmethod
     def Step_Line(ax,PH):
+
+        """
+        Basic line histogram (which emulated mplhep.histplot)
+        """
 
         x_binning = PH.Bin_Edges
         values    = np.concatenate((PH.Bin_Values,np.asarray([0])), axis=0) 
@@ -94,39 +100,35 @@ class HEP_Plot:
 
         return ax
 
+
     @staticmethod
     def Step_Line_Errorbar(ax,PH):
 
+        """
+        For generating a line histogram with uncapped errorbars
+        """
+
         ax = HEP_Plot.Step_Line(ax,PH)
 
-        ax.errorbar(PH.Bin_Centres,PH.Bin_Values,PH.Bin_Errors,elinewidth=PH.linewidth,ecolor=PH.colour,fmt='',xerr=None,linestyle='')
+        ax.errorbar(PH.Bin_Centres,PH.Bin_Values,PH.Bin_Errors,elinewidth=20,ecolor=PH.colour,fmt='',xerr=None,linestyle='')
 
 
 
     @staticmethod
-    def Steps_Filled_Erros(ax,Hist_Wrapper,Normalised):#Histogram,error_up,error_down): # Need to pass error up and error down
+    def Line_Filled_Errors(ax,PH):
 
-        """For making a histogram plot with steps, where the errors are filled lighter bars above and below the step """
+        """
+        For generating a line histogram with filled block error 
+        """
 
-        # Histogram = Hist_Ob.Histogram
-        # print(Hist_Wrapper.__dict__)
-        # input()
-        Hist = Hist_Wrapper.Norm_hist if Normalised else Hist_Wrapper.ROOT_hist
+        ax = HEP_Plot.Step_Line(ax,PH)
 
-        hep.histplot(Hist, ax=ax, stack=False, histtype='step',color=Hist_Wrapper.colour,label=Hist_Wrapper.legend_entry,lw=1.0)
+        for i in range(0,len(PH.Bin_Values)):
 
-        # Not used
-        errps = {'hatch':'////', 'facecolor':'blue', 'lw': 0, 'alpha': 0.4}
-
-
-        # bin_edges = [xx_axis.GetBinUpEdge(binn) for x in ]
-        x_binning = Hist_Wrapper.Bin_Edges(Hist)
-        values    = Hist_Wrapper.Bin_Values(Hist)
-        errors    = Hist_Wrapper.Bin_Errors(Hist)
-        ax.stairs(
-            values=values + errors,
-            baseline=values - errors,
-            edges=x_binning, fill=True,alpha=0.25,color=Hist_Wrapper.colour)
+            ax.fill_between(x=[PH.Bin_Edges[i],PH.Bin_Edges[i+1]],
+                            y1=PH.Bin_Values[i]+PH.Bin_Errors[i],
+                            y2=PH.Bin_Values[i]-PH.Bin_Errors[i],
+                            color=PH.colour,alpha=0.2)
 
 
 
@@ -156,12 +158,11 @@ class HEP_Plot:
 
         """Selects the type of plot from the dictionary which effectives works as a switch"""
 
-        plot_dic = {"basic-line":self.Step_Line,
-                    "errorbar-line":self.Step_Line_Errorbar}
+        plot_dic = {"basic-line"        : self.Step_Line,
+                    "line-errorbar"     : self.Step_Line_Errorbar,
+                    "line-filled-error" : self.Line_Filled_Errors}
 
         return plot_dic[plot_type]
-
-
 
 
 
@@ -260,102 +261,9 @@ class Ratio_Plot_ROOT(HEP_Plot):
         # Do the legend here
         handles, labels = ax.get_legend_handles_labels()
         labels = [HW.legend_entry for HW in self.list_of_histograms]
-        ax.legend(handles, labels)
+        ax.legend(handles, labels,prop={'size': 18})
 
         return plt,ax,rax
-
-
-
-
-    # def Make_Errorbar_Line_Plot(self):
-
-    #     fig,ax,rax =self.initialise_axes()
-    #     # ax,rax =self.axes[0],self.axes[1]
-
-    #     # Top plot
-    #     for PH in self.list_of_histograms:
-    #         HW = PH.Norm_PyWrap_Hist if self.Normalised else PH.UnNorm_PyWrap_Hist
-    #         self.Step_Errorbar_Line(ax,HW)
-
-    #     for HW in self.list_of_ratio_histograms:
-    #         self.Step_Errorbar_Line(rax,HW)
-
-    #     return plt
-
-
-
-
-
-
-
-# class Ratio_Plot(HEP_Plot):
-
-#     '''
-#     The Ratio_Plot inherits from the parent HEP_Plot class
-#     The methods here are:
-#         - the computation of ratio histograms
-#         - the initialistion of the mpl object
-#         - the filling of the plot
-#     '''
-
-#     def __init__(self,plot_title,**kwargs):
-#         super().__init__(plot_title,**kwargs) 
-#         self.divisor = kwargs["divisor"] if "divisor" in kwargs else None
-
-#     @staticmethod
-#     def Compute_Ratio(hist1,hist2):
-#         ratio_hist = hist1/hist2
-#         ratio_uncertainties = ratio_uncertainty(hist1.view(),hist2.view(),"poisson")
-#         # print(ratio_uncertainties)
-#         # input()
-#         return Hist_Object(ratio_hist,ratio_uncertainties)#[0],ratio_uncertainties[1])
-
-#     def Axis_Labels(self,dic_of_labels):
-#         self.axes[1].set_xlabel(dic_of_labels["x"])
-#         self.axes[1].set_ylabel(dic_of_labels["y2"])
-#         self.axes[0].set_ylabel(dic_of_labels["y1"])
-
-#     def Axis_XTick_Labels(self,labels,**kwargs):
-#         # print(self.axes[1].get_xticklabels)
-#         # input()
-#         self.axes[1].set_xticklabels(labels)
-        
-
-#     def Make_Step_Fill_Plot(self):
-
-#         assert len(self.list_of_histograms) != 0, "No histograms passed to plot" 
-
-#         # Initialise the plot
-#         fig, (ax, rax) = plt.subplots(2, 1, figsize=(6,6), gridspec_kw=dict(height_ratios=[3, 1], hspace=0.1), sharex=True)
-
-#         self.fig = fig
-#         self.axes = (ax,rax)
-
-#         # Select whether to do normalisation
-#         legend_elements = []
-
-#         for H in self.list_of_histograms:
-
-#             if self.Normalised == False:
-
-#                 self.Steps_Filled_Erros(ax=ax,Hist_Ob=H.UnNorm_Hist)
-#                 ratio_obj = self.Compute_Ratio(H.UnNorm_Hist.Histogram,self.divisor.UnNorm_Hist.Histogram)
-#                 ratio_obj.Set_Features(colour=H.colour)
-#                 self.Steps_Filled_Erros(ax=rax,Hist_Ob=ratio_obj)
-
-#             elif self.Normalised == True:
-#                 self.Steps_Filled_Erros(ax=ax,Hist_Ob=H.Norm_Hist)
-#                 ratio_obj = self.Compute_Ratio(H.Norm_Hist.Histogram,self.divisor.Norm_Hist.Histogram)
-#                 ratio_obj.Set_Features(colour=H.colour)
-#                 self.Steps_Filled_Erros(ax=rax,Hist_Ob=ratio_obj)
-
-#             # Do the legend part here
-#             legend_elements.append(Line2D([0],[0],color=H.colour,lw=2,label=H.label))
-
-#         ax.legend(handles=legend_elements)#, loc='center')
-
-#         # ax.legend()
-#         return plt
 
 
 
