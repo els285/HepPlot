@@ -26,7 +26,7 @@ plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
 
 ### Line Histogram with Vertical Error Bars
 
-<img src="Example_Plots/plt_lineerrorbar.png" alt="drawing" width="600"/>
+<img src="Example_Plots/plt_lineerrorbar2.png" alt="drawing" width="600"/>
 
 ### Line Histogram with Filled Erros
 
