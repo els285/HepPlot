@@ -21,3 +21,5 @@ The `Make_Ratio_Plot` method generates the plot based on the data and meta-data 
 plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
 
 ```
+
+![Alt text](plt_linefillederror.png?raw=true "Title")
