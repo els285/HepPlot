@@ -22,7 +22,10 @@ plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
 
 ```
 
+## Exmaple Plot Types
 
-<img src="Example_Plots/plt_linefillederror.png" alt="drawing" width="200"/>
+### Line Histogram with Filled Erros
+
+<img src="Example_Plots/plt_linefillederror.png" alt="drawing" width="800"/>
 
 
