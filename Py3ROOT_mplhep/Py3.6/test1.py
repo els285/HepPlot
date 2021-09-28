@@ -29,7 +29,7 @@ from Plotting import Ratio_Plot_ROOT
 p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1,normalise=True)
 p.Initialise_Plot_Design("ATLAS")
 
-plt,ax,rax = p.Make_Ratio_Plot("line-filled-error")
+plt,ax,rax = p.Make_Ratio_Plot("line-errorbar")
 import matplotlib
 p.Add_ATLAS_Label("Internal")
 
@@ -48,4 +48,4 @@ fig.set_size_inches(8, 8)
 # plt.show()
 # input()
 
-plt.savefig("plt_linefillederror.png",dpi=300)
+plt.savefig("plt_lineerrorbar.png",dpi=300)
