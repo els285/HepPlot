@@ -7,10 +7,10 @@ TH1.SetDefaultSumw2()
 # Make ROOT histograms
 
 
-hist1 = TH1D("hist1","",50,-1,1)
+hist1 = TH1D("hist1","",20,-1,1)
 hist1.FillRandom("gaus",1000)
 
-hist2 = TH1D("hist2","",50,-1,1)
+hist2 = TH1D("hist2","",20,-1,1)
 hist2.FillRandom("gaus",1000)
 
 hist3 = hist1.Clone()
@@ -19,8 +19,8 @@ hist3.Divide(hist2)
 # Convert to Python Wrappers
 from PyHist_Class import Histogram_Wrapper as Histogram
 
-x1 = Histogram(hist1,"hist1",colour="pink"  ,legend_entry="tennis")
-x2 = Histogram(hist2,"hist2",colour="green"  ,legend_entry="tennis" )
+x1 = Histogram(hist1,"hist1",colour="red"  ,legend_entry="tennis")
+x2 = Histogram(hist2,"hist2",colour="blue"  ,legend_entry="tennis" )
 
 
 # Initialise the plot
@@ -45,7 +45,7 @@ fig = plt.gcf()
 fig.set_size_inches(8, 8)
 
 
-plt.show()
-input()
+# plt.show()
+# input()
 
-plt.savefig("save1.png",dpi=300)
+plt.savefig("plt_linefillederror.png",dpi=300)
