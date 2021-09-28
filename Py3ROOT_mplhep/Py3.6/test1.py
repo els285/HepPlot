@@ -48,4 +48,4 @@ fig.set_size_inches(8, 8)
 # plt.show()
 # input()
 
-plt.savefig("plt_lineerrorbar.png",dpi=300)
+plt.savefig("Example_Plots/plt_lineerrorbar.png",dpi=300)
