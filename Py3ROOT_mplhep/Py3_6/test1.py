@@ -29,9 +29,9 @@ from Plotting import Ratio_Plot_ROOT
 p = Ratio_Plot_ROOT("A Plot",list_of_histograms=[x1,x2],divisor=x1,normalise=True)
 p.Initialise_Plot_Design("ATLAS")
 
-plt,ax,rax = p.Make_Ratio_Plot("line-errorbar")
+plt,ax,rax = p.Make_Ratio_Plot("basic-line")
 import matplotlib
-p.Add_ATLAS_Label("Internal")
+# p.Add_ATLAS_Label("Internal")
 
 p.add_axis_labels(x_lower=r"$\Sigma$",y_upper=r"$\eta$",y_lower="y2")
 
@@ -45,7 +45,7 @@ fig = plt.gcf()
 fig.set_size_inches(8, 8)
 
 
-# plt.show()
-# input()
+plt.show()
+input()
 
 plt.savefig("Example_Plots/plt_lineerrorbar.png",dpi=300)

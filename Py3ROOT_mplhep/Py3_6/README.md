@@ -21,8 +21,29 @@ The `Make_Ratio_Plot` method generates the plot based on the data and meta-data 
 plt,ax,rax = p.Make_Ratio_Plot("errorbar-line")
 
 ```
+## Plot Styles
 
-## Exmaple Plot Types
+Set using the command
+
+```python3
+p.Initialise_Plot_Design("ATLAS")
+```
+
+* ATLAS
+* CMS
+* LHCb2
+* ALICE
+* Seaborn
+
+## Plot Types
+
+* basic-line       
+* line-errorbar    
+* line-filled-error
+
+
+
+## Examples
 
 ### Line Histogram with Vertical Error Bars
 

@@ -145,7 +145,6 @@ class HEP_Plot:
                             y2=PH.Bin_Values[i]-PH.Bin_Errors[i],
                             color=PH.colour,alpha=0.2)
 
-    # @staticmethod
 
 
     #     ax = 
@@ -184,8 +183,6 @@ class HEP_Plot:
                     }
 
         return plot_dic[plot_type]
-
-
 
 
 
@@ -282,11 +279,23 @@ class Ratio_Plot_ROOT(HEP_Plot):
     # def One_Filled_Rest_Line(self,filled_hist,filled_ratio_hist):
 
 
-    #     hist4line       = [HW for HW in self.list_of_histograms if HW not filled_hist]
+    #     hist4line       = [HW for HW in self.list_of_histograms       if HW not filled_hist]
     #     hsit4line_ratio = [HW for HW in self.list_of_ratio_histograms if HW not filled_ratio_hist]
 
     #     HEP_Plot.Line_Filled_Errors(ax,filled_hist)
     #     HEP_Plot.Line_Filled_Errors(rax,filled_ratio_hist)
+
+    #     for PH in hist4line:
+
+
+    def Add_Hist2Plot(self,hist,plot_type):
+        """
+        Adds a histogram element to a plot
+        """
+        plotting_function = self.select_plot_type(plot_type)
+
+        plotting_function(hist)
+
 
     def Make_Ratio_Plot(self,plot_type):
 
@@ -301,7 +310,7 @@ class Ratio_Plot_ROOT(HEP_Plot):
         identical=True
         if identical:
             ax,rax = self.Identical_Plotting(ax,rax,plotting_function)
-        # if plotting_function == self.One_Filled_Rest_Line:
+        if plotting_function == self.One_Filled_Rest_Line:
 
 
  
