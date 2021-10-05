@@ -13,6 +13,11 @@ from PyHist_Class import PyHist,Histogram_Wrapper
 
 class HEP_Plot:
 
+    """
+    The fundamental class of HEP plot
+    Includes the design specifics and the functions for each type of histogram plot
+    """
+
     allowed_experiment_styles = ["ATLAS","ALICE","LHCb2","CMS","ATLASTex"]
 
     def Add_ATLAS_Label(self,label_text,**kwargs):
@@ -41,6 +46,10 @@ class HEP_Plot:
  
     def Initialise_LHC_Plot(self,experiment):
 
+        """
+        Sets the plot style based on the HEPstyle input
+        """
+
         assert any([experiment == x for x in self.allowed_experiment_styles]), "Experiment style not defined"
 
         # hep.style.use(experiment)#, {'xtick.direction': 'out'}])
@@ -51,6 +60,7 @@ class HEP_Plot:
         elif experiment=="ATLASTex": 
             print("This is not supported because do not have a working TexLive distribution")
             # plt.style.use(hep.style.ATLASTex) # T
+
 
 
     def Initialise_Seaborn_Plot(self,**kwargs):
@@ -81,8 +91,13 @@ class HEP_Plot:
         self.list_of_histograms = self.list_of_histograms + histograms2add
 
 
-    def Customise_Legend(self):
-        pass
+
+
+    ###################################################
+    """
+    Plotting functions
+    """
+    ###################################################
 
 
     @staticmethod
@@ -107,11 +122,13 @@ class HEP_Plot:
         """
         Basic filled histogram
         """
+
         x_binning = PH.Bin_Edges
         values    = np.concatenate((PH.Bin_Values,np.asarray([0])), axis=0) 
 
         ax.fill_between(x_binning,values,step="post", alpha=0.4,color=PH.colour)
 
+        return ax
 
         
 
@@ -127,6 +144,7 @@ class HEP_Plot:
 
         ax.errorbar(PH.Bin_Centres,PH.Bin_Values,PH.Bin_Errors,elinewidth=PH.linewidth,ecolor=PH.colour,fmt='',xerr=None,linestyle='')
 
+        return ax
 
 
     @staticmethod
@@ -145,10 +163,10 @@ class HEP_Plot:
                             y2=PH.Bin_Values[i]-PH.Bin_Errors[i],
                             color=PH.colour,alpha=0.2)
 
-    # @staticmethod
+        return ax
 
 
-    #     ax = 
+
 
 
     def __init__(self,plot_title,**kwargs):
@@ -180,13 +198,14 @@ class HEP_Plot:
         plot_dic = {"basic-line"        : self.Step_Line,
                     "line-errorbar"     : self.Step_Line_Errorbar,
                     "line-filled-error" : self.Line_Filled_Errors,
-                    "filled-hist"       : self.Filled_Hist
+                    "filled-hist"       : self.Filled_Hist,
+                    "one-filled-rest-line": self.One_Filled_Rest_Line
                     }
 
         return plot_dic[plot_type]
 
 
-
+    # def Legend_Customisation(self,)
 
 
 
@@ -234,6 +253,7 @@ class Ratio_Plot_ROOT(HEP_Plot):
         if "y_lower" in kwargs:
             self.axes[1].set_ylabel(kwargs["y_lower"])
 
+
     ###### Constructing list of ratio histograms
 
     def Construct_Ratio_Histograms(self,hist_type):   
@@ -242,8 +262,10 @@ class Ratio_Plot_ROOT(HEP_Plot):
 
         for HW in self.list_of_histograms:
             hist = self.Compute_Ratio(getattr(HW,hist_type),getattr(self.divisor,hist_type))
-            wrapped=Histogram_Wrapper.Create_Wrapper(hist,"name",colour=HW.colour,linewidth=HW.linewidth)
+            wrapped=Histogram_Wrapper.Create_Wrapper(hist,HW.name,colour=HW.colour,linewidth=HW.linewidth)
             self.list_of_ratio_histograms.append(wrapped)
+
+
 
     def Do_Ratio(self):
 
@@ -268,6 +290,7 @@ class Ratio_Plot_ROOT(HEP_Plot):
 
 
 
+
     def Identical_Plotting(self,ax,rax,plotting_function):
         for PH in self.list_of_histograms:
             HW = PH.Norm_PyWrap_Hist if self.Normalised else PH.UnNorm_PyWrap_Hist
@@ -279,16 +302,38 @@ class Ratio_Plot_ROOT(HEP_Plot):
         return ax,rax
 
 
-    # def One_Filled_Rest_Line(self,filled_hist,filled_ratio_hist):
 
 
-    #     hist4line       = [HW for HW in self.list_of_histograms if HW not filled_hist]
-    #     hsit4line_ratio = [HW for HW in self.list_of_ratio_histograms if HW not filled_ratio_hist]
 
-    #     HEP_Plot.Line_Filled_Errors(ax,filled_hist)
-    #     HEP_Plot.Line_Filled_Errors(rax,filled_ratio_hist)
+    def One_Filled_Rest_Line(self,ax,rax,filled_hist):
 
-    def Make_Ratio_Plot(self,plot_type):
+        """
+        Pass the overall Python wrapper as the histogram to be filled
+        """
+
+
+        hist4line       = [HW for HW in self.list_of_histograms if HW != filled_hist]       
+        hist4line_ratio = [PY for PY in self.list_of_ratio_histograms if PY.Name != filled_hist.name]
+        filled_hist_ratio_list = list(set(self.list_of_ratio_histograms)  - set(hist4line_ratio))
+        assert len(filled_hist_ratio_list)==1, "Multiple histograms named the same thing: cannot identify unique histogram to plot as filled"
+        filled_ratio_hist = filled_hist_ratio_list[0]
+
+        for PH in hist4line:
+            HW = PH.Norm_PyWrap_Hist if self.Normalised else PH.UnNorm_PyWrap_Hist
+            ax = HEP_Plot.Line_Filled_Errors(ax,HW)
+
+        fh_HW = filled_hist.Norm_PyWrap_Hist if self.Normalised else filled_hist.UnNorm_PyWrap_Hist
+        HEP_Plot.Filled_Hist(ax,fh_HW)
+
+        for HW in hist4line_ratio:
+            rax = HEP_Plot.Line_Filled_Errors(rax,HW)
+        HEP_Plot.Filled_Hist(rax,filled_ratio_hist)
+
+        return ax,rax
+
+
+
+    def Make_Ratio_Plot(self,plot_type,**kwargs):
 
         """ Assigns the correct plotting function
         Initialises the axes """
@@ -297,18 +342,18 @@ class Ratio_Plot_ROOT(HEP_Plot):
 
         fig,ax,rax =self.initialise_ratio_axes()
 
+        identical = False if plotting_function==self.One_Filled_Rest_Line else True
 
-        identical=True
         if identical:
             ax,rax = self.Identical_Plotting(ax,rax,plotting_function)
-        # if plotting_function == self.One_Filled_Rest_Line:
 
-
- 
-
+        elif not identical and plotting_function==self.One_Filled_Rest_Line and "filled" in kwargs:
+            ax,rax = self.One_Filled_Rest_Line(ax,rax,kwargs["filled"])
 
         # Do the legend here
         handles, labels = ax.get_legend_handles_labels()
+        print(handles)
+        input()
         labels = [HW.legend_entry for HW in self.list_of_histograms]
         ax.legend(handles, labels,prop={'size': 18})
 

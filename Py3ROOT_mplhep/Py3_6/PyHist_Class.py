@@ -21,13 +21,13 @@ class PyHist:
         self.Bin_Values  = Bin_Values  
         self.Bin_Errors  = Bin_Errors  
         self.Bin_Centres = Bin_Centres 
-        self.Bin_Edges   = Bin_Edges  
-        self.legend_entry = Name 
+        self.Bin_Edges   = Bin_Edges   
 
         # Plot meta-data
         self.colour       = kwargs["colour"]       if "colour"       in kwargs else "blue"
         self.linewidth    = kwargs["linewdith"]    if "linewdith"    in kwargs else 2
-        if "legend_entry" in kwargs:   self.legend_entry = kwargs["legend_entry"]
+        self.legend_entry = kwargs["legend_entry"] if "legend_entry" in kwargs else ""
+
 
 
 class Histogram_Wrapper:
