@@ -65,3 +65,8 @@ p.Initialise_Plot_Design("ATLAS")
 <img src="Example_Plots/plt_linefillederror.png" alt="drawing" width="600"/>
 
 
+## Issues
+
+When using the filled histogram style, which is not build around a step plot, a legend is not automatically generated.
+
+
