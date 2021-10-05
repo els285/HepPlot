@@ -126,6 +126,13 @@ class HEP_Plot:
         x_binning = PH.Bin_Edges
         values    = np.concatenate((PH.Bin_Values,np.asarray([0])), axis=0) 
 
+        # Required for the legend handles
+
+        ax.plot(x_binning, values,drawstyle="steps-post",color=PH.colour,label=PH.Name,linewidth=PH.linewidth,alpha=0)#Hist_Wrapper.linewidth)
+        ax.vlines(x_binning[0],0,values[0],color=PH.colour,linewidth=PH.linewidth,alpha=0)#Hist_Wrapper.linewidth)
+
+        # The actual histogram filling
+
         ax.fill_between(x_binning,values,step="post", alpha=0.4,color=PH.colour)
 
         return ax
