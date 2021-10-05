@@ -33,7 +33,6 @@ import sys
 sys.path.insert(1, '/home/ethan/github_hep/HepPlot/Py3ROOT_mplhep/Py3_6')
 ```
 In the fullness of time, would be nice to turn this into a package.
->>>>>>> bc29e5cc71a98ebc3ebc11fa9be37d192804b7fe
 
 Set using the command
 
