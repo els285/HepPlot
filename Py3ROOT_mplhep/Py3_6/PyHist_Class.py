@@ -88,17 +88,19 @@ class Histogram_Wrapper:
         self.linewidth          = kwargs["linewidth"]        if "linewidth"         in kwargs else 2
 
         # ROOT histograms
-        norm_hist = self.Compute_Normalised(ROOT_hist)
         self.UnNorm_ROOT_hist = ROOT_hist
-        self.Norm_ROOT_hist   = norm_hist 
 
         # Unnormalised Hist wrapper
         self.UnNorm_PyWrap_Hist = self.Create_Wrapper(ROOT_hist,self.name+"_Unnormalised",
             colour=self.colour,legend_entry=self.legend_entry,linewidth=self.linewidth)
 
-        # Normalised Hist wrapper
-        self.Norm_PyWrap_Hist   = self.Create_Wrapper(norm_hist,self.name+"_Normalised",
-            colour=self.colour,legend_entry=self.legend_entry,linewidth=self.linewidth)
+        # Normalising histograms should depend on if histogram is empty or not
+        if ROOT_hist.Integral()!=0.0:
+            norm_hist = self.Compute_Normalised(ROOT_hist)
+            self.Norm_ROOT_hist   = norm_hist 
+            # Normalised Hist wrapper
+            self.Norm_PyWrap_Hist   = self.Create_Wrapper(norm_hist,self.name+"_Normalised",
+                colour=self.colour,legend_entry=self.legend_entry,linewidth=self.linewidth)
 
 
 

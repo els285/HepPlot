@@ -359,8 +359,8 @@ class Ratio_Plot_ROOT(HEP_Plot):
 
         # Do the legend here
         handles, labels = ax.get_legend_handles_labels()
-        print(handles)
-        input()
+        # print(handles)
+        # input()
         labels = [HW.legend_entry for HW in self.list_of_histograms]
         ax.legend(handles, labels,prop={'size': 18})
 
