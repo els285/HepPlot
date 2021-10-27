@@ -309,15 +309,11 @@ class Ratio_Plot_ROOT(HEP_Plot):
         return ax,rax
 
 
-
-
-
     def One_Filled_Rest_Line(self,ax,rax,filled_hist):
 
         """
         Pass the overall Python wrapper as the histogram to be filled
         """
-
 
         hist4line       = [HW for HW in self.list_of_histograms if HW != filled_hist]       
         hist4line_ratio = [PY for PY in self.list_of_ratio_histograms if PY.Name != filled_hist.name]
@@ -354,17 +350,44 @@ class Ratio_Plot_ROOT(HEP_Plot):
         if identical:
             ax,rax = self.Identical_Plotting(ax,rax,plotting_function)
 
-        elif not identical and plotting_function==self.One_Filled_Rest_Line and "filled" in kwargs:
-            ax,rax = self.One_Filled_Rest_Line(ax,rax,kwargs["filled"])
+        # elif not identical and plotting_function==self.One_Filled_Rest_Line and "filled" in kwargs:
+        #     ax,rax = self.One_Filled_Rest_Line(ax,rax,kwargs["filled"])
 
         # Do the legend here
-        handles, labels = ax.get_legend_handles_labels()
-        # print(handles)
-        # input()
-        labels = [HW.legend_entry for HW in self.list_of_histograms]
-        ax.legend(handles, labels,prop={'size': 18})
+        self.do_legend()
+
 
         return plt,ax,rax
+
+    def do_legend(self,**kwargs):
+
+        """
+        Can redfine the legend parameters 
+        """
+        ax = self.axes[0]
+        handles, labels = ax.get_legend_handles_labels()
+
+        loc = kwargs["loc"] if "loc" in kwargs else "upper right"
+        labels = kwargs["labels"] if "labels" in kwargs else [HW.legend_entry for HW in self.list_of_histograms]
+        
+
+        ax.legend(handles, labels, loc=loc,prop={'size': 18})
+
+
+def standard_ATLAS_ratio_plot(list_of_histograms,divisor):
+
+    p = Ratio_Plot_ROOT("A Plot",list_of_histograms=list_of_histograms,divisor=divisor,normalise=True)
+    p.Initialise_Plot_Design("ATLAS")
+
+    plt,ax,rax = p.Make_Ratio_Plot("line-errorbar")
+
+    p.Add_ATLAS_Label("Internal")
+
+    return p,plt
+
+
+
+
 
 
 

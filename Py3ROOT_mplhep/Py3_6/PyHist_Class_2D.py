@@ -39,7 +39,6 @@ class Histogram_Wrapper:
 
     @staticmethod
     def get_bin_values(hist):
-        # return np.asarray([hist.GetBinContent(binn+1) for binn in range(0,hist.GetNbinsX())])
         outer =[]
         for binnX in range(0,hist.GetXaxis().GetNbins()):
             inner = []
@@ -47,14 +46,12 @@ class Histogram_Wrapper:
                 inner.append(hist.GetBinContent(binnX+1,binnY+1))
             outer.append(inner)
         arr1 = np.asarray(outer)
-        # arr2 = np.flip(arr1,0)
         arr3 = np.transpose(arr1,axes=None)
         return arr3
 
 
     @staticmethod
     def get_bin_errors(hist):
-        # return np.asarray([hist.GetBinError(binn+1) for binn in range(0,hist.GetNbinsX())])
         outer =[]
         for binnX in range(0,hist.GetXaxis().GetNbins()):
             inner = []
@@ -74,10 +71,10 @@ class Histogram_Wrapper:
 
     @staticmethod
     def get_bin_centres(hist):
-
         x_axis = np.asarray([hist.GetXaxis().GetBinCenter(binn+1) for binn in range(0,hist.GetXaxis().GetNbins())])
         y_axis = np.asarray([hist.GetYaxis().GetBinCenter(binn+1) for binn in range(0,hist.GetYaxis().GetNbins())])
         return (x_axis,y_axis)
+
 
     @staticmethod
     def Compute_Normalised(ROOT_hist):
@@ -88,6 +85,7 @@ class Histogram_Wrapper:
         h1dN.Scale(1/ROOT_hist.Integral())
 
         return h1dN
+
 
     @staticmethod
     def normalise_by_row(ROOT_2dhist):
@@ -122,7 +120,6 @@ class Histogram_Wrapper:
         return df_og,df_norm
 
 
-
     def plot_2d(self,normed):
 
         """
@@ -150,8 +147,7 @@ class Histogram_Wrapper:
                 ax.text(y,x,pyhist.Bin_Values[i,j],ha='center', va='center',fontsize=24)
 
         return fig, ax, pc
-        
-
+    
 
     @classmethod
     def Create_Wrapper(self,hist,name,**kwargs):
@@ -161,7 +157,6 @@ class Histogram_Wrapper:
         Bin_Centres = self.get_bin_centres(hist)
         Bin_Edges   = self.get_bin_edges(hist)
         return PyHist2D(name,Bin_Values,Bin_Errors,Bin_Edges,Bin_Centres,**kwargs)
-
 
 
     def __init__(self,ROOT_hist,name,**kwargs):
