@@ -7,9 +7,7 @@
 
 
 import matplotlib.pyplot as plt
-
 import numpy as np
-from numpy.core.defchararray import upper
 import pandas as pd
 import mplhep as hep
 
@@ -34,6 +32,7 @@ class EFT_Plot:
 
         self.df = df
         self.orientation = kwargs["orientation"] if "orientation" in kwargs else "vertical"
+        self.colours = kwargs["colours"] if "colours" in kwargs else None
         
         # Assign which columns to plot
         if "to_plot" in kwargs:
@@ -72,7 +71,6 @@ class EFT_Plot:
             self.wc_array = [-0.15,0,0.15]
 
 
-
     def make_plot(self):
         if self.orientation=="hor":
             self.make_horizontal_plot()
@@ -80,16 +78,17 @@ class EFT_Plot:
             self.make_vertical_plot()
 
 
+
     def make_vertical_plot(self):
 
         fig, ax = plt.subplots()
 
-        y_points = np.arange(0,df.shape[0]+1)
+        y_points = np.arange(0,self.df.shape[0]+1)
 
-        for col,yp in zip(self.to_plot,self.wc_array):
+        for col,yp,color in zip(self.to_plot,self.wc_array,self.colours):
             for i,(index,row) in enumerate(self.df.iterrows()):
                 value,asymmetric_error = self.get_points(col,index,row)
-                plt.errorbar(x=value,y=i+1+yp,xerr=asymmetric_error,fmt='x')
+                plt.errorbar(x=value,y=i+1+yp,xerr=asymmetric_error,fmt='x',capsize=5,color=color)
 
         ax.set_yticks(y_points[1:])
         ax.set_yticklabels(self.df.index)
@@ -104,14 +103,12 @@ class EFT_Plot:
 
         fig, ax = plt.subplots()
 
-        x_points = np.arange(0,df.shape[0]+1)
+        x_points = np.arange(0,self.df.shape[0]+1)
 
-        for col,xp in zip(self.to_plot,self.wc_array):
-
+        for col,xp,color in zip(self.to_plot,self.wc_array,self.colours):
             for i,(index,row) in enumerate(self.df.iterrows()):
-
                 value,asymmetric_error = self.get_points("Linear",index,row)
-                plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,fmt='x')
+                plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,fmt='x',capsize=5,color=color)
 
         ax.set_xticks(x_points[1:])
         ax.set_xticklabels(self.df.index)
@@ -121,8 +118,6 @@ class EFT_Plot:
 
         plt.xlabel("Wilson Coefficients")
         return plt,fig,ax
-
-
 
 
 
