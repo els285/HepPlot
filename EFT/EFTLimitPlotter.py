@@ -5,18 +5,20 @@
 
 # Pass a pandas dataframe with a set of Wilson coefficients ad corresponding values
 
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import mplhep as hep
-
 
 """
 Structure of the DataFrame
 WC: Linear, Linear+Quadratic, ...
 Each part should then be a list of tuples: if there is a single region found, more if multiple (per operator)
 Each tuple should be of the form (global mode, lower bound, upper bound)
+"""
+"""
+The data format input could be a json file nested in the structure (EFT model,Wilson coefficient,number of bounds), 
+    with each entry containing (value, lower bound, upper bound).
 """
 
 
@@ -32,7 +34,7 @@ class EFT_Plot:
 
         self.df = df
         self.orientation = kwargs["orientation"] if "orientation" in kwargs else "vertical"
-        self.colours = kwargs["colours"] if "colours" in kwargs else None
+        self.colours = kwargs["colours"] if "colours" in kwargs else plt.rcParams['axes.prop_cycle'].by_key()['color']
         
         # Assign which columns to plot
         if "to_plot" in kwargs:
@@ -47,11 +49,10 @@ class EFT_Plot:
         self.generate_wc_ordinates()
 
 
-    def get_points(self,column,index,row):
-            wilson_coef=index
-            value=row[column][0]
-            lower_bound = row[column][1]
-            upper_bound = row[column][2]
+    def get_points(self,tup):
+            value       = tup[0]
+            lower_bound = tup[1]
+            upper_bound = tup[2]
 
             lower_error = value - lower_bound
             upper_error = upper_bound - value
@@ -62,33 +63,42 @@ class EFT_Plot:
 
 
     def generate_wc_ordinates(self):
-        assert self.number2plot < 4 and isinstance(self.number2plot,int), "Too many branches to plot"
+        assert self.number2plot < 5 and isinstance(self.number2plot,int), "Too many branches to plot"
         if self.number2plot==1:
             self.wc_array = [0]
         if self.number2plot==2:
             self.wc_array = [-0.05,0.05]
         if self.number2plot==3:
             self.wc_array = [-0.15,0,0.15]
+        if self.number2plot==4:
+            self.wc_array = [-0.15,-0.05,0.05,0.15]
 
 
-    def make_plot(self):
+    def make_plot(self,**kwargs):
+
+        """Makes plot defined by orientation, which can be pre-set or passed to this function"""
+        
+        if "orientation" in kwargs: self.orientation=kwargs["orientation"]
+        assert self.orientation, "Orientation of plot not defined"
         if self.orientation=="hor":
-            self.make_horizontal_plot()
+            fig,ax=self.make_horizontal_plot()
         elif self.orientation=="vert":
-            self.make_vertical_plot()
-
+            fig,ax=self.make_vertical_plot()
+        return fig,ax
 
 
     def make_vertical_plot(self):
-
+        
         fig, ax = plt.subplots()
 
         y_points = np.arange(0,self.df.shape[0]+1)
 
-        for col,yp,color in zip(self.to_plot,self.wc_array,self.colours):
+        for col,yp,color in zip(self.to_plot,self.wc_array,self.colours): # Loop over columns
             for i,(index,row) in enumerate(self.df.iterrows()):
-                value,asymmetric_error = self.get_points(col,index,row)
-                plt.errorbar(x=value,y=i+1+yp,xerr=asymmetric_error,fmt='x',capsize=5,color=color)
+                for tup in row[col]:
+                    if tup !=None:
+                        value,asymmetric_error = self.get_points(tup)
+                        plt.errorbar(x=value,y=i+1+yp,xerr=asymmetric_error,fmt='x',capsize=5,color=color)
 
         ax.set_yticks(y_points[1:])
         ax.set_yticklabels(self.df.index)
@@ -96,19 +106,25 @@ class EFT_Plot:
 
         ax.tick_params(axis='y', which='minor', left=False, right=False)
 
+        plt.xlabel("Value")
         plt.ylabel("Wilson Coefficients")
-        return plt,fig,ax
+        return fig,ax
+
 
     def make_horizontal_plot(self):
 
         fig, ax = plt.subplots()
 
+        self.fig , self.ax = fig,ax
+
         x_points = np.arange(0,self.df.shape[0]+1)
 
         for col,xp,color in zip(self.to_plot,self.wc_array,self.colours):
             for i,(index,row) in enumerate(self.df.iterrows()):
-                value,asymmetric_error = self.get_points("Linear",index,row)
-                plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,fmt='x',capsize=5,color=color)
+                for tup in row[col]:
+                    if tup !=None:
+                        value,asymmetric_error = self.get_points(tup)
+                        plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,fmt='x',capsize=5,color=color)
 
         ax.set_xticks(x_points[1:])
         ax.set_xticklabels(self.df.index)
@@ -117,7 +133,10 @@ class EFT_Plot:
         ax.tick_params(axis='x', which='minor', bottom=False, top=False)
 
         plt.xlabel("Wilson Coefficients")
-        return plt,fig,ax
+        plt.ylabel("Value")
+        return fig,ax
+
+    # def plot_single_values(self,df2):
 
 
 
