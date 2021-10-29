@@ -77,7 +77,7 @@ class EFT_Plot:
     def make_plot(self,**kwargs):
 
         """Makes plot defined by orientation, which can be pre-set or passed to this function"""
-        
+
         if "orientation" in kwargs: self.orientation=kwargs["orientation"]
         assert self.orientation, "Orientation of plot not defined"
         if self.orientation=="hor":
@@ -106,6 +106,7 @@ class EFT_Plot:
 
         ax.tick_params(axis='y', which='minor', left=False, right=False)
 
+        self.make_legend()
         plt.xlabel("Value")
         plt.ylabel("Wilson Coefficients")
         return fig,ax
@@ -132,13 +133,27 @@ class EFT_Plot:
 
         ax.tick_params(axis='x', which='minor', bottom=False, top=False)
 
+        self.make_legend()
+
         plt.xlabel("Wilson Coefficients")
         plt.ylabel("Value")
         return fig,ax
 
-    # def plot_single_values(self,df2):
+    def make_legend(self):
+        from matplotlib.lines import Line2D
 
+        handles, labels = plt.gca().get_legend_handles_labels()
+        for attrib,colour in zip(self.to_plot,self.colours):
+            line = Line2D([0], [0], label=attrib, color=colour)
+            handles.extend([line])
+        handles.reverse()
+        plt.legend(handles=handles)
 
+    def plot_single_values(self,df2):
+        """Must same structure of dataframe but with the global modes, this could be contained separately"""
+        pass
+        
+        
 
 class LHC_EFT_Plot(EFT_Plot):
 
@@ -159,6 +174,9 @@ class LHC_EFT_Plot(EFT_Plot):
         elif experiment=="ATLASTex": 
             print("This is not supported because do not have a working TexLive distribution")
             # plt.style.use(hep.style.ATLASTex) # T
+
+    def include_metadata(self,text,data,lumi,year):
+        hep.atlas.label(text, data=data, lumi=lumi, year=year)
 
     def __init__(self,df,experiment,**kwargs,):
         
