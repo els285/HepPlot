@@ -98,13 +98,7 @@ class EFT_Plot:
 
         for col,yp,color in zip(self.to_plot,self.wc_array,self.colours): # Loop over columns
             for i,(index,row) in enumerate(self.df.iterrows()):
-                # print("this is the row")
-                # print(row.Linear.Bounds)
-                # input()
-                for tup in row[col].Bounds:
-                    # print(row[col])
-                    # print(tup)
-                    # input()
+                 for tup in row[col].Bounds:
                     if tup !=None:
                         value,asymmetric_error = self.get_points(tup)
                         plt.errorbar(x=value,y=i+1+yp,xerr=asymmetric_error,capsize=5,color=color)
@@ -132,7 +126,7 @@ class EFT_Plot:
 
         for col,xp,color in zip(self.to_plot,self.wc_array,self.colours):
             for i,(index,row) in enumerate(self.df.iterrows()):
-                for tup in row[col]:
+                for tup in row[col].Bounds:
                     if tup !=None:
                         value,asymmetric_error = self.get_points(tup)
                         plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,fmt='x',capsize=5,color=color)
