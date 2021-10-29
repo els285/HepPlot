@@ -8,6 +8,9 @@ cHt	[-4.6],[8.4]
 """
 
 import re 
+import pandas as pd
+import matplotlib.pyplot as plt
+
 
 def compute_mid_point(lower,upper): 
     return 0.5*(upper - lower)
@@ -22,6 +25,9 @@ def extract_bounds_from_txt(filename):
     for x in Lines:
         indiv_line = x.replace("\t",",")
         t = indiv_line.split(",")
+        # Here is where we will insert the additional part
+        # lower_bounds = t[1].replace("[","").replace("]","").split(",")
+        # upper_bounds = t[2].replace("[","").replace("]","").replace("\n","")).split(",")
         lower_bound =float(t[1].replace("[","").replace("]",""))
         upper_bound =float(t[2].replace("[","").replace("]","").replace("\n",""))
         data[t[0]] =[(lower_bound,upper_bound)]
@@ -53,21 +59,61 @@ def extract_global_mode(filename):
     
     return data
 
-def Parse(bounds_filename,statistics_filename):
+# def Parse(bounds_filename,statistics_filename):
+
+#     bounds_data       =  extract_bounds_from_txt(bounds_filename)
+#     global_mode_data  =  extract_global_mode(statistics_filename)
+
+#     data = {}
+#     for wc in bounds_data:
+#         assert wc in global_mode_data.keys(),"Cannot find "+wc+" in global_mode_data"
+#         data[wc] = {"Bounds":bounds_data[wc],"Global Mode":global_mode_data[wc]}
+
+#     df = pd.DataFrame.from_dict(data).T
+#     return df 
+
+
+def parse_general(bounds_filename,statistics_dir):
+
+    """
+    parse_general(...) extracts bounds from the given 1dlimits.txt file
+    It also loops over all the files in the given directory with name containing 'statistics' and parse the global modes from these
+    """
 
     bounds_data       =  extract_bounds_from_txt(bounds_filename)
-    global_mode_data  =  extract_global_mode(statistics_filename)
+
+    import os 
+    stats_files2parse = [file for file in os.listdir(statistics_dir) if "statistics" in file]
+   
+    global_mode_dict = {}
+    for file in stats_files2parse:
+        indiv_global_mode_data = extract_global_mode(statistics_dir +"/"+file)
+        global_mode_dict = {**global_mode_dict,**indiv_global_mode_data}
 
     data = {}
     for wc in bounds_data:
-        assert wc in global_mode_data.keys(),"Cannot find "+wc+" in global_mode_data"
-        data[wc] = {"Bounds":bounds_data[wc],"Global Mode":global_mode_data[wc]}
-    # data = {**bounds_data, **global_mode_data}
-
-    import pandas as pd
+        assert wc in global_mode_dict.keys(),"Cannot find "+wc+" in global_mode_data"
+        data[wc] = {"Bounds":bounds_data[wc],"Global Mode":global_mode_dict[wc]}
 
     df = pd.DataFrame.from_dict(data).T
     return df 
 
-print(Parse(bounds_filename="/home/ethan/EFTfitterSpinCorr.jl/results_ptz_laurynas/Numerics/1dlimits.txt",
-            statistics_filename="/home/ethan/EFTfitterSpinCorr.jl/results_ptz_laurynas/Numerics/statistics.txt"))
+
+def loop_dirs(dic_of_directories):
+    # Eventually just define the base directory and everything is done from there
+    d = {}
+    for (k,v) in dic_of_directories.items():
+        df = parse_general(bounds_filename=v+"/Numerics/1dlimits.txt",statistics_dir=v+"/Numerics/")
+        d[k] = df
+    return pd.concat(d, axis=1)
+
+
+def auto_construct(base_path):
+    dic_of_directories = {"Linear+Quadratic" : base_path,
+                            "Linear"         : base_path+"_linear",
+                            "Independent"    : base_path+"_independent"}
+    
+    output_df = loop_dirs(dic_of_directories)
+
+    return output_df
+

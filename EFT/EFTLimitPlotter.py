@@ -35,31 +35,34 @@ class EFT_Plot:
         self.df = df
         self.orientation = kwargs["orientation"] if "orientation" in kwargs else "vertical"
         self.colours = kwargs["colours"] if "colours" in kwargs else plt.rcParams['axes.prop_cycle'].by_key()['color']
+        self.all_fits = set(self.df.columns.get_level_values(0))
+
         
         # Assign which columns to plot
         if "to_plot" in kwargs:
             if kwargs["to_plot"]=="all": 
-                self.to_plot = self.df.columns.tolist()
-            if isinstance(kwargs["to_plot"],list) and all([x in self.df.columns.tolist() for x in kwargs["to_plot"]]):
+                self.to_plot = self.all_fits
+            if isinstance(kwargs["to_plot"],list) and all([x in self.all_fits for x in kwargs["to_plot"]]):
                 self.to_plot = kwargs["to_plot"]
         else:
-            self.to_plot = self.df.columns.tolist()
+            self.to_plot = self.all_fits
 
         self.number2plot = len(self.to_plot)
         self.generate_wc_ordinates()
 
 
     def get_points(self,tup):
-            value       = tup[0]
-            lower_bound = tup[1]
-            upper_bound = tup[2]
+            get_value = lambda u,l: 0.5*(u-l)
+            lower_bound = tup[0]
+            upper_bound = tup[1]
+            plot_value  = get_value(upper_bound,lower_bound)
 
-            lower_error = value - lower_bound
-            upper_error = upper_bound - value
+            lower_error = plot_value - lower_bound
+            upper_error = upper_bound - plot_value
 
             error_array = np.array([[lower_error ,upper_error]]).T
 
-            return value,error_array
+            return plot_value,error_array
 
 
     def generate_wc_ordinates(self):
@@ -95,10 +98,16 @@ class EFT_Plot:
 
         for col,yp,color in zip(self.to_plot,self.wc_array,self.colours): # Loop over columns
             for i,(index,row) in enumerate(self.df.iterrows()):
-                for tup in row[col]:
+                # print("this is the row")
+                # print(row.Linear.Bounds)
+                # input()
+                for tup in row[col].Bounds:
+                    # print(row[col])
+                    # print(tup)
+                    # input()
                     if tup !=None:
                         value,asymmetric_error = self.get_points(tup)
-                        plt.errorbar(x=value,y=i+1+yp,xerr=asymmetric_error,fmt='x',capsize=5,color=color)
+                        plt.errorbar(x=value,y=i+1+yp,xerr=asymmetric_error,capsize=5,color=color)
 
         ax.set_yticks(y_points[1:])
         ax.set_yticklabels(self.df.index)
@@ -109,6 +118,7 @@ class EFT_Plot:
         self.make_legend()
         plt.xlabel("Value")
         plt.ylabel("Wilson Coefficients")
+
         return fig,ax
 
 
@@ -147,7 +157,7 @@ class EFT_Plot:
             line = Line2D([0], [0], label=attrib, color=colour)
             handles.extend([line])
         handles.reverse()
-        plt.legend(handles=handles)
+        plt.legend(handles=handles,loc="upper right")
 
     def plot_single_values(self,df2):
         """Must same structure of dataframe but with the global modes, this could be contained separately"""
