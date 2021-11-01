@@ -6,13 +6,19 @@ A pandas dataframe is generated containing this information, and this dataframe 
 LHC-based plot styles can be added; this is facilitated via the `mplhep` module.
 
 ## Example
+To parse from the output directory:
 ```python3
 
 import matplotlib.pyplot as plt
 from parse_directories import auto_construct
-from EFTLimitPlotter import LHC_EFT_Plot
 
-df = auto_construct("/home/ethan/EFTfitterSpinCorr.jl/results_ptz_laurynas")
+df = auto_construct("<path/to/EFTfitter.jl/output>")
+```
+
+The plots are made using the following, where `make_vertical_plot()` plots the limit bounds and `plot_global_mode_vertical()` plots the global mode of each operator.
+
+```python3
+from EFTLimitPlotter import LHC_EFT_Plot
 
 plot_object = LHC_EFT_Plot(df=df,to_plot="all",experiment="ATLAS")#,colours=["red","blue"])
 
@@ -20,6 +26,5 @@ fig,ax = plot_object.make_vertical_plot()
 plot_object.plot_global_mode_vertical()
 
 plot_object.include_metadata("",False,50,2017)
+```
 
-plt.show()
-input()
