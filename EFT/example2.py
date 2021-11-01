@@ -9,9 +9,15 @@ from EFTLimitPlotter import LHC_EFT_Plot
 
 x = auto_construct("/home/ethan/EFTfitterSpinCorr.jl/results_ptz_laurynas")
 
+
+print(x)
+input()
+
 y = LHC_EFT_Plot(df=x,to_plot="all",experiment="ATLAS")#,colours=["red","blue"])
 
 fig,ax=y.make_vertical_plot()
+y.plot_global_mode_vertical()
+
 y.include_metadata("",False,50,2017)
 
 plt.show()

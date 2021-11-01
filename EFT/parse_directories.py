@@ -23,14 +23,13 @@ def extract_bounds_from_txt(filename):
     Lines = file1.readlines()
 
     for x in Lines:
-        indiv_line = x.replace("\t",",")
-        t = indiv_line.split(",")
-        # Here is where we will insert the additional part
-        # lower_bounds = t[1].replace("[","").replace("]","").split(",")
-        # upper_bounds = t[2].replace("[","").replace("]","").replace("\n","")).split(",")
-        lower_bound =float(t[1].replace("[","").replace("]",""))
-        upper_bound =float(t[2].replace("[","").replace("]","").replace("\n",""))
-        data[t[0]] =[(lower_bound,upper_bound)]
+        indiv_line = x.replace("\t",",").replace("\n","")
+        t = indiv_line.split("[")
+        wc=t[0].replace(",","")
+        lower_bounds_str_list = t[1][:-1].replace("]","").split(",")
+        upper_bounds_str_list = t[2].replace("]","").split(",")
+        bounds = [(float(l),float(u)) for (l,u) in zip(lower_bounds_str_list,upper_bounds_str_list)]
+        data[wc] = bounds
 
     return data
 

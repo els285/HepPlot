@@ -153,11 +153,26 @@ class EFT_Plot:
         handles.reverse()
         plt.legend(handles=handles,loc="upper right")
 
-    def plot_single_values(self,df2):
-        """Must same structure of dataframe but with the global modes, this could be contained separately"""
-        pass
+
+    def plot_global_mode_vertical(self):
+
+        assert self.orientation=="vertical", "Cannot plot vertical global modes when main plot is horizontal"
+        for col,yp,color in zip(self.to_plot,self.wc_array,self.colours): # Loop over columns
+            for i,(index,row) in enumerate(self.df.iterrows()):
+                global_mode_value=row[col]['Global Mode']
+                plt.scatter(x=global_mode_value,y=i+1+yp,color=color)
+
+
+    def plot_global_mode_horizontal(self):
+
+        assert self.orientation=="horizontal", "Cannot plot horizontal global modes when main plot is vertical"
+        for col,yp,color in zip(self.to_plot,self.wc_array,self.colours): # Loop over columns
+            for i,(index,row) in enumerate(self.df.iterrows()):
+                global_mode_value=row[col]['Global Mode']
+                plt.scatter(y=global_mode_value,x=i+1+yp,color=color)
         
         
+
 
 class LHC_EFT_Plot(EFT_Plot):
 
