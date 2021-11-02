@@ -105,7 +105,7 @@ class EFT_Plot:
 
         ax.set_yticks(y_points[1:])
         ax.set_yticklabels(self.df.index)
-        ax.set_ylim(0,len(y_points))
+        ax.set_ylim(0.5,len(y_points))
 
         ax.tick_params(axis='y', which='minor', left=False, right=False)
 
@@ -129,11 +129,12 @@ class EFT_Plot:
                 for tup in row[col].Bounds:
                     if tup !=None:
                         value,asymmetric_error = self.get_points(tup)
-                        plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,fmt='x',capsize=5,color=color)
+                        plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,capsize=5,color=color)
 
         ax.set_xticks(x_points[1:])
         ax.set_xticklabels(self.df.index)
-        ax.set_xlim(0,len(x_points))
+        ax.set_xlim(0.5,len(x_points)+1)
+        # ax.set_ylim(-1,1)
 
         ax.tick_params(axis='x', which='minor', bottom=False, top=False)
 
