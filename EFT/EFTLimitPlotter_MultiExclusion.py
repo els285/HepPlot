@@ -352,9 +352,9 @@ class ATLAS_HiggsStyle_EFT_Plot(LHC_EFT_Plot):
 
     # plot_design_
 
-    def __init__(self,df,experiment,**kwargs):
+    def __init__(self,df,**kwargs):
        
-        super().__init__(df,experiment,colours=self.default_colours,plot_design_dict=self.default_AH_plt_dict,**kwargs)
+        super().__init__(df,experiment="ATLAS",colours=self.default_colours,plot_design_dict=self.default_AH_plt_dict,**kwargs)
         # self.experiment = experiment
 
         # self.initialise_LHC_plot(experiment)
