@@ -31,7 +31,37 @@ from ParseFromTXT import auto_parse
 df = auto_parse("<path/to/EFTfitter.jl/output>")
 ```
 
-The plots are made using the following, where `make_vertical_plot()` plots the limit bounds and `plot_global_mode_vertical()` plots the global mode of each operator.
+The basic EFT bound is simple to make:
+
+```python3
+Plot_object = EFT_Plot(df=x,to_plot="all",
+                # to_plot=["Linear+Quadratic (Marginalised)","Linear (Marginalsied)" ,"Linear+Quadratic (Independent)"],
+                orientation="horizontal",
+                plot_zero_line=True)
+
+fig,ax = Plot_object.make_plot(orientation="horizontal",plot_global_modes=True)
+```
+
+
+A generic ATLAS EFT plot with colours specified would be:
+<img src="Example_Plots/plt_lineerrorbar2.png" alt="drawing" width="600"/>
+
+
+```python3
+Plot_object = LHC_EFT_Plot(df=x,experiment="ATLAS",
+                to_plot=["Linear+Quadratic (Marg.)","Linear (Marg.)" ,"Linear+Quadratic (Indp.)"],
+                orientation="vertical",
+                plot_zero_line=False,
+                colours=["blue","red","green"])
+
+fig,ax = Plot_object.make_plot(orientation="vertical",plot_global_modes=True)
+Plot_object.include_metadata("Internal",True,139,2017)
+Plot_object.additional_label(r"SMEFT $\Lambda = 1$ TeV")
+```
+which yields:
+<img src="Example_Plots/plt_lineerrorbar2.png" alt="drawing" width="600"/>
+
+
 
 ```python3
 from EFTLimitPlotter import LHC_EFT_Plot
