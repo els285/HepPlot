@@ -17,6 +17,9 @@ cHQ3                [(-8.4, 4.0)]               [(-10.0, 6.0)]   -0.048322  [(-1
 cHt                 [(-4.6, 8.4)]              [(-10.0, 15.0)]   -0.046624  [(-10.5, 10.0)]  [(-10.5, 10.0)]   -0.052951            [(-1.9, 1.5)]   [(-1.9, 1.5)] -2.879516e-07
 
 ```
+The rows (indices) are the Wilson coefficients. The columns constitute a Pandas MultiIndex with layering 1. Fit (Linear,Linaer+Quadratic,etc.) 2. Data-type (bounds, global mode) 3. Bounds @ various significanes 
+
+
 
 ## Plotting
 LHC-based plot styles can be added; this is facilitated via the `mplhep` module.
