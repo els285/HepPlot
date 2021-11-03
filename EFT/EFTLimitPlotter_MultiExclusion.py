@@ -19,6 +19,10 @@ Each tuple should be of the form (global mode, lower bound, upper bound)
 """
 The data format input could be a json file nested in the structure (EFT model,Wilson coefficient,number of bounds), 
     with each entry containing (value, lower bound, upper bound).
+
+
+Plotting is limited to 4 different types of fits at once, those this can be extended though must be hard-coded.
+The MultiExclusion works only for a specific type of DataFrame    
 """
 
 
@@ -89,10 +93,16 @@ class EFT_Plot:
 
         if "orientation" in kwargs: self.orientation=kwargs["orientation"]
         assert self.orientation, "Orientation of plot not defined"
-        if self.orientation=="hor":
+        if self.orientation=="horizontal":
             fig,ax=self.make_horizontal_plot()
-        elif self.orientation=="vert":
+            if "plot_global_modes" in kwargs and kwargs["plot_global_modes"]:
+                self.plot_global_mode_horizontal()
+
+        elif self.orientation=="vertical":
             fig,ax=self.make_vertical_plot()
+            if "plot_global_modes" in kwargs and kwargs["plot_global_modes"]:
+                self.plot_global_mode_vertical()
+            
         return fig,ax
 
 
@@ -112,7 +122,7 @@ class EFT_Plot:
                 for tup in _95_data:
                     if tup !=None:
                         value,asymmetric_error = self.get_points(tup)
-                        p1 = plt.errorbar(x=value,y=i+1+xp,xerr=asymmetric_error,capsize=7,color=color,alpha=0.7)
+                        p1 = plt.errorbar(x=value,y=i+1+xp,xerr=asymmetric_error,capsize=7,color=color,alpha=0.5)
                         p1[-1][0].set_linestyle('--')
 
         ax.set_yticks(y_points[1:])
@@ -149,15 +159,6 @@ class EFT_Plot:
                         p1 = plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,capsize=7,color=color,alpha=0.7)
                         p1[-1][0].set_linestyle('--')
 
-                # print(_68_data)
-                # input()
-                # for label,list_of_bounds in row[col].Bounds.items():            # Looping over exclusion bounds e.g. (1sigma,2sigma)
-                #     for tup in list_of_bounds:
-                #         print(tup)
-                #         input() 
-                #         if tup !=None:
-                #             value,asymmetric_error = self.get_points(tup)
-                #             plt.errorbar(x=i+1+xp,y=value,yerr=asymmetric_error,capsize=5,color=color)
 
         ax.set_xticks(x_points[1:])
         ax.set_xticklabels(self.df.index)
@@ -190,7 +191,10 @@ class EFT_Plot:
             for attrib,colour in zip(self.to_plot,self.colours):
                 line = Line2D([],[], ls="none",color=colour,label=attrib)
                 barline = LineCollection(np.empty((2,2,2)),color=colour)
-                err = ErrorbarContainer((line, [line], [barline]), has_xerr=False, has_yerr=True,label=attrib)
+                if self.orientation=="horizontal":
+                    err = ErrorbarContainer((line, [line], [barline]), has_xerr=False, has_yerr=True,label=attrib)
+                if self.orientation=="vertical":
+                    err = ErrorbarContainer((line, [line], [barline]), has_xerr=True, has_yerr=False,label=attrib)
                 handles.extend([err])
 
         # Global model dot
@@ -202,7 +206,7 @@ class EFT_Plot:
 
         if self.plot_design_dict["legend 68 95"]:
             line_inner = Line2D([0], [0], label=r"68% confidence", color="dimgrey",linestyle="solid")
-            line_outer = Line2D([0], [0], label=r"95% confidence", color="dimgrey",linestyle="dashed")
+            line_outer = Line2D([0], [0], label=r"95% confidence", color="dimgrey",linestyle="dashed",alpha=0.7)
             handles.extend([line_inner,line_outer])
 
 

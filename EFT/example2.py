@@ -18,10 +18,14 @@ y = LHC_EFT_Plot(df=x,
 
 # To define the same order every time, it is necessary to specify the to_plot field in the above
 
-fig,ax=y.make_horizontal_plot()
-y.plot_global_mode_horizontal()
+# fig,ax=y.make_horizontal_plot()
+# y.plot_global_mode_horizontal()
+
+fig,ax=y.make_plot(orientation="vertical",plot_global_modes=True)
 
 y.include_metadata("Internal",True,139.1,2017)
+
+ax.set_xlim(-15,20)
 
 plt.show()
 input()
