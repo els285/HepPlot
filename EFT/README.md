@@ -27,11 +27,8 @@ LHC-based plot styles can be added; this is facilitated via the `mplhep` module.
 ## Example
 To parse from the output directory:
 ```python3
-
-import matplotlib.pyplot as plt
-from parse_directories import auto_construct
-
-df = auto_construct("<path/to/EFTfitter.jl/output>")
+from ParseFromTXT import auto_parse
+df = auto_parse("<path/to/EFTfitter.jl/output>")
 ```
 
 The plots are made using the following, where `make_vertical_plot()` plots the limit bounds and `plot_global_mode_vertical()` plots the global mode of each operator.
@@ -39,11 +36,12 @@ The plots are made using the following, where `make_vertical_plot()` plots the l
 ```python3
 from EFTLimitPlotter import LHC_EFT_Plot
 
-plot_object = LHC_EFT_Plot(df=df,to_plot="all",experiment="ATLAS")#,colours=["red","blue"])
+Plot_object = LHC_EFT_Plot(df=df,to_plot="all",experiment="ATLAS")#,colours=["red","blue"])
 
-fig,ax = plot_object.make_vertical_plot()
-plot_object.plot_global_mode_vertical()
+fig,ax = Plot_object.make_plot(orientation="horizontal",plot_global_modes=True)
 
-plot_object.include_metadata("",False,50,2017)
+Plot_object.include_metadata("",False,50,2017)
+Plot_object.additional_label(r"SMEFT $\Lambda = 1$ TeV")
+
 ```
 
