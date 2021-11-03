@@ -31,6 +31,7 @@ from ParseFromTXT import auto_parse
 df = auto_parse("<path/to/EFTfitter.jl/output>")
 ```
 
+### Standard Design
 The basic EFT bound is simple to make:
 
 ```python3
@@ -63,7 +64,7 @@ which yields:
 
 <img src="example_plots/lhc_plot.png" alt="drawing" width="900"/>
 
-
+### LHC Design
 
 ```python3
 from EFTLimitPlotter import LHC_EFT_Plot
