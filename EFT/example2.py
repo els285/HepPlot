@@ -1,9 +1,9 @@
 
 import matplotlib.pyplot as plt
-from parse_directories import auto_construct
+from ParseFromTXT import auto_parse
 from EFTLimitPlotter_MultiExclusion import ATLAS_HiggsStyle_EFT_Plot, LHC_EFT_Plot
 
-x = auto_construct("/home/ethan/EFTfitterSpinCorr.jl/results_ptz_laurynas")
+x = auto_parse("/home/ethan/EFTfitterSpinCorr.jl/results_ptz_laurynas")
 
 # print(x)
 # input()
