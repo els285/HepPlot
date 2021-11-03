@@ -44,7 +44,8 @@ fig,ax = Plot_object.make_plot(orientation="horizontal",plot_global_modes=True)
 
 
 A generic ATLAS EFT plot with colours specified would be:
-<img src="Example_Plots/plt_lineerrorbar2.png" alt="drawing" width="600"/>
+
+<img src="example_plots/standard_plot.png" alt="drawing" width="600"/>
 
 
 ```python3
@@ -59,7 +60,8 @@ Plot_object.include_metadata("Internal",True,139,2017)
 Plot_object.additional_label(r"SMEFT $\Lambda = 1$ TeV")
 ```
 which yields:
-<img src="Example_Plots/plt_lineerrorbar2.png" alt="drawing" width="600"/>
+
+<img src="example_plots/lhc_plot.png" alt="drawing" width="600"/>
 
 
 
