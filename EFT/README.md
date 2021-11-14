@@ -77,4 +77,9 @@ Plot_object.include_metadata("",False,50,2017)
 Plot_object.additional_label(r"SMEFT $\Lambda = 1$ TeV")
 
 ```
+# Plotting 1D Posteriors
 
+I have now worked out how to extract the one-dimensional posteriors from the `EFTfitter.jl` package. 
+To complete:
+* 1D LHC-design plot design, using matplotlib and mplhep.
+* Stacked version of the above
