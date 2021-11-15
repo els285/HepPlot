@@ -31,6 +31,7 @@ from ParseFromTXT import auto_parse
 df = auto_parse("<path/to/EFTfitter.jl/output>")
 ```
 
+### Standard Design
 The basic EFT bound is simple to make:
 
 ```python3
@@ -44,7 +45,8 @@ fig,ax = Plot_object.make_plot(orientation="horizontal",plot_global_modes=True)
 
 
 A generic ATLAS EFT plot with colours specified would be:
-<img src="Example_Plots/plt_lineerrorbar2.png" alt="drawing" width="600"/>
+
+<img src="example_plots/standard_plot.png" alt="drawing" width="900"/>
 
 
 ```python3
@@ -59,9 +61,10 @@ Plot_object.include_metadata("Internal",True,139,2017)
 Plot_object.additional_label(r"SMEFT $\Lambda = 1$ TeV")
 ```
 which yields:
-<img src="Example_Plots/plt_lineerrorbar2.png" alt="drawing" width="600"/>
 
+<img src="example_plots/lhc_plot.png" alt="drawing" width="900"/>
 
+### LHC Design
 
 ```python3
 from EFTLimitPlotter import LHC_EFT_Plot
@@ -74,4 +77,9 @@ Plot_object.include_metadata("",False,50,2017)
 Plot_object.additional_label(r"SMEFT $\Lambda = 1$ TeV")
 
 ```
+# Plotting 1D Posteriors
 
+I have now worked out how to extract the one-dimensional posteriors from the `EFTfitter.jl` package. 
+To complete:
+* 1D LHC-design plot design, using matplotlib and mplhep.
+* Stacked version of the above
